@@ -22,6 +22,8 @@ FROM nginx:alpine
 # Copy the built files from the previous stage to the Nginx server directory
 COPY --from=build-env /app/dist /usr/share/nginx/html
 
+COPY /static/videos /usr/share/nginx/html/videos
+
 # Expose the port on which Nginx will run (optional)
 EXPOSE 80
 
