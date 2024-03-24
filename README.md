@@ -1,2 +1,2 @@
 # wedding-website
-Our wedding website
+Our wedding website.

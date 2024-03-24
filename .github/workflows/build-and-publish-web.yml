@@ -1,9 +1,7 @@
 name: Build and Publish Docker Image
 
 on:
-  push:
-    paths:
-      - 'web/**' # Trigger workflow when changes occur in the "web" directory
+  push
 
 jobs:
   build-and-publish:
