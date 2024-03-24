@@ -133,8 +133,8 @@ export class NavigationMenu extends LitElement {
           <a href="/" @click="${this.closeMenu}">HOME</a>
           <a href="/about" @click="${this.closeMenu}">RSVP</a>
           <a href="/accommodations" @click="${this.closeMenu}">ACCOMMODATIONS</a>
-          <a href="/about" @click="${this.closeMenu}">Q&A</a>
-          <a href="/about" @click="${this.closeMenu}">REGISTRY</a>
+          <a href="/faq" @click="${this.closeMenu}">Q&A</a>
+          <a href="/registry" @click="${this.closeMenu}">REGISTRY</a>
           <!-- Add more links as needed -->
         </div>
       </div>
