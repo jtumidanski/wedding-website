@@ -28,9 +28,7 @@ jobs:
           context: ./web
           file: ./web/Dockerfile
           push: true
-          tags: |
-            ghcr.io/jtumidanski/wedding-website/wedding-website-ui:latest
-            ghcr.io/jtumidanski/wedding-website/wedding-website-ui:${{ github.sha }}
+          tags: ghcr.io/jtumidanski/wedding-website/wedding-website-ui:${{ github.sha }}
         env:
           DOCKER_BUILDKIT: 1
           PLATFORMS: linux/amd64,linux/arm64
