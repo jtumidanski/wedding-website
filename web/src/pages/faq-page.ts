@@ -26,7 +26,7 @@ export class FaqPage extends BasePage {
           gap: 30px;
           overflow: auto;
       }
-      
+
       .faq-content {
           display: flex;
           flex-direction: column;
@@ -34,7 +34,7 @@ export class FaqPage extends BasePage {
           gap: 10px;
           align-self: stretch;
       }
-      
+
       .page-title {
           color: #FFF;
           text-align: center;

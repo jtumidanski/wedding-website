@@ -1,8 +1,9 @@
 // base-page.ts
-import { css, html, LitElement } from 'lit';
+import {LitElement} from 'lit';
 
 export class BasePage extends LitElement {
   isMobile = false;
+
   constructor() {
     super();
     this.isMobile = false; // Assume desktop by default

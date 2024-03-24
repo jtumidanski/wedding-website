@@ -1,7 +1,7 @@
 // base-page.ts
 import { css, html, LitElement } from 'lit';
 
-export class RegistryBaseLink extends LitElement {
+export class BaseRegistryLink extends LitElement {
   static styles = css`
       .content {
           border-radius: 4px;

@@ -1,10 +1,10 @@
 // mobile-header.ts
 import {css, html, LitElement, TemplateResult} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {RegistryBaseLink} from './registry-base-link';
+import {BaseRegistryLink} from './base-registry-link';
 
 @customElement('honey-fund-registry-link')
-export class LogoIcon extends RegistryBaseLink {
+export class HoneyFundRegistryLink extends BaseRegistryLink {
 
   handleClick() {
     document.location.href = "https://www.honeyfund.com/site/mcclung-tumidanski-08-30-2024";
