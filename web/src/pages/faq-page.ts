@@ -22,9 +22,9 @@ export class FaqPage extends BasePage {
           width: 100vw;
           padding: 20px;
           box-sizing: border-box;
-          border: 1px solid #ccc;
           gap: 30px;
-          overflow: auto;
+          overflow-x: hidden;
+          overflow-y: auto;
       }
 
       .faq-content {
