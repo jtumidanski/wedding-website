@@ -14,6 +14,8 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.2.0
+        with:
+          use: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
         
@@ -36,7 +38,7 @@ jobs:
           tags: ghcr.io/jtumidanski/wedding-website/wedding-website-ui:${{ github.sha }}
         env:
           DOCKER_BUILDKIT: 1
-          PLATFORMS: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+          PLATFORMS: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
 
       # Print the Docker images produced by the build-push-action for debugging
       - name: List Docker images
