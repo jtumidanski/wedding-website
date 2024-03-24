@@ -66,7 +66,7 @@ export class LogoIcon extends LitElement {
           color: #FFF;
           text-align: center;
           font-family: Avenir, sans-serif;
-          font-size: 14px;
+          font-size: 16px;
           font-style: normal;
           font-weight: 400;
           line-height: normal;
@@ -85,11 +85,11 @@ export class LogoIcon extends LitElement {
       .normal-text a {
           color: #FFF;
           font-family: Avenir, sans-serif;
-          font-size: 10px;
+          font-size: 16px;
           font-style: normal;
           font-weight: 400;
-          line-height: 14px;
-          letter-spacing: 1px;
+          line-height: normal;
+          letter-spacing: 1.4px;
           text-decoration-line: underline;
       }
       
