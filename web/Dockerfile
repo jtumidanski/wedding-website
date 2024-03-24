@@ -23,6 +23,7 @@ FROM nginx:alpine
 COPY --from=build-env /app/dist /usr/share/nginx/html
 
 COPY /static/videos /usr/share/nginx/html/videos
+COPY /static/images /usr/share/nginx/html/images
 
 # Expose the port on which Nginx will run (optional)
 EXPOSE 80
