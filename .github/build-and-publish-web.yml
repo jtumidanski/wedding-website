@@ -1,0 +1,27 @@
+name: Build and Publish Docker Image
+
+on:
+  push:
+    paths:
+      - 'web/**' # Trigger workflow when changes occur in the "web" directory
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      
+      - name: Build Docker Image
+        working-directory: ./web
+        run: |
+          docker build -t docker.pkg.github.com/${{ github.repository }}/wedding-website-ui:${{ github.sha }} .
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Publish Docker Image
+        working-directory: ./web
+        run: |
+          docker push docker.pkg.github.com/${{ github.repository }}/wedding-website-ui:${{ github.sha }}
