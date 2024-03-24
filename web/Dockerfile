@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Use a lightweight Nginx image as a base for serving the application
-FROM nginx:alpine
+FROM nginx:alpine3.18
 
 # Copy the custom Nginx configuration file into the container
 COPY nginx.conf /etc/nginx/conf.d/default.conf
