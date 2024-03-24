@@ -2,6 +2,7 @@
 import {css, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import '../components/mobile-header';
+import '../components/desktop-header'
 import '../components/styled-button';
 import '../components/itinerary-item';
 import '../components/footer-item'
@@ -37,6 +38,12 @@ export class HomePage extends BasePage {
           text-transform: uppercase;
       }
 
+      .normal-text.desktop {
+          font-size: 21px;
+          line-height: 137.8%; /* 28.938px */
+          letter-spacing: 2.1px;
+      }
+
       .normal-text.bold {
           font-weight: 800;
       }
@@ -59,6 +66,10 @@ export class HomePage extends BasePage {
           border-width: 1px;
           border-style: solid;
       }
+      
+      .hour-frame.desktop {
+          width: 400px;
+      }
 
       .wedding-intro {
           flex-shrink: 0;
@@ -75,6 +86,10 @@ export class HomePage extends BasePage {
           gap: 20px;
           align-self: stretch;
       }
+
+      .wedding-info.desktop {
+          gap: 10px;
+      }
       
       .mobile-button {
           width: 100%;
@@ -82,6 +97,23 @@ export class HomePage extends BasePage {
       
       itinerary-item {
           width: 100%;
+      }
+      
+      .desktop-info-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 50px;
+          align-self: stretch;
+      }
+      
+      .desktop-detail-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100vw;
+          flex-direction: row;
+          gap: 50px;
       }
   `;
 
@@ -111,7 +143,36 @@ export class HomePage extends BasePage {
     `;
   }
 
+  desktopRender() {
+    return html`
+      <div class="content">
+        <desktop-header></desktop-header>
+        <div class="desktop-info-container">
+          <div class="wedding-intro">
+            <div class="normal-text desktop">Please join Abigail & Justin</div>
+            <div class="date-text">August 30th 2024</div>
+            <div class="normal-text desktop">To celebrate their wedding</div>
+          </div>
+          <div class="desktop-detail-container">
+            <div class="desktop-address-container">
+              <div class="normal-text desktop">Ceremony & reception to be celebrated at</div>
+              <div class="normal-text bold desktop">Bay pointe woods</div>
+              <div class="normal-text desktop">5100 oarie dr, shelbyville, mi 49344</div>
+            </div>
+            <div class="hour-frame desktop">
+              <itinerary-item key="Ceremony" value="00:00 pm" desktop></itinerary-item>
+              <itinerary-item key="Cocktail Hour" value="00:00 pm" desktop></itinerary-item>
+              <itinerary-item key="Dinner" value="00:00 pm" desktop></itinerary-item>
+              <itinerary-item key="Reception" value="00:00 pm" desktop></itinerary-item>
+            </div>
+          </div>
+        </div>
+        <footer-item></footer-item>
+      </div>
+    `;
+  }
+
   render() {
-    return this.isMobile ? this.mobileRender() : html`test`
+    return this.isMobile ? this.mobileRender() : this.desktopRender()
   }
 }

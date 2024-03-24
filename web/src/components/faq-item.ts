@@ -41,6 +41,18 @@ export class LogoIcon extends LitElement {
     this.requestUpdate('separator', oldValue);
   }
 
+  _desktop = false;
+  @property({ type: Boolean })
+  get desktop() {
+    return this._desktop;
+  }
+
+  set desktop(value) {
+    const oldValue = this._desktop;
+    this._desktop = value;
+    this.requestUpdate('desktop', oldValue);
+  }
+
   static styles = css`
       .content {
           display: flex;
@@ -60,9 +72,14 @@ export class LogoIcon extends LitElement {
           line-height: normal;
           letter-spacing: 1.4px;
       }
+      
+      .normal-text.desktop {
+          font-size: 18px;
+          letter-spacing: 0.9px;
+      }
 
       .normal-text.bold {
-          font-weight: 800;
+          font-weight: 900;
       }
 
       .normal-text a {
@@ -76,6 +93,11 @@ export class LogoIcon extends LitElement {
           text-decoration-line: underline;
       }
       
+      .normal-text.desktop a {
+          font-size: 18px;
+          letter-spacing: 0.9px;
+      }
+      
       .separator {
           fill: #FFF;
           stroke-width: 1px;
@@ -86,8 +108,8 @@ export class LogoIcon extends LitElement {
   render() {
     return html`
       <div class="content">
-        <div class="normal-text bold">${this.key}</div>
-        <div class="normal-text">${unsafeHTML(this.value)}</div>
+        <div class="normal-text bold ${this._desktop ? 'desktop' : ''}">${this.key}</div>
+        <div class="normal-text ${this._desktop ? 'desktop' : ''}">${unsafeHTML(this.value)}</div>
         ${this.separator ? html`<div class="separator">
           <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6" fill="none">
             <circle cx="3" cy="3" r="2" fill="white" stroke="white"/>

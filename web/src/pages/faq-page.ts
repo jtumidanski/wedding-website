@@ -45,6 +45,12 @@ export class FaqPage extends BasePage {
           line-height: 47px; /* 117.5% */
           letter-spacing: 2.8px;
       }
+
+      .page-title.desktop {
+          font-size: 72px;
+          line-height: 72px; /* 100% */
+          letter-spacing: 9.36px;
+      }
   `;
 
 
@@ -76,7 +82,22 @@ export class FaqPage extends BasePage {
     `;
   }
 
+  desktopRender() {
+    return html`
+      <div class="content">
+        <desktop-header selected="2"></desktop-header>
+        <div class="faq-content">
+          <div class="page-title desktop">Q&A</div>
+          ${Array.from(this.items.entries()).map(([q, a], index, array) => html`
+            <faq-item key="${q}" value="${a}" .separator="${index < array.length - 1}" desktop></faq-item>
+          `)}
+        </div>
+        <footer-item></footer-item>
+      </div>
+    `;
+  }
+
   render() {
-    return this.isMobile ? this.mobileRender() : html``
+    return this.isMobile ? this.mobileRender() : this.desktopRender();
   }
 }

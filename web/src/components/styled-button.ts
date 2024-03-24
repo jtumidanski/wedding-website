@@ -28,6 +28,18 @@ export class StyledButton extends LitElement {
     this.requestUpdate('enabled', oldValue);
   }
 
+  _selected = false;
+  @property({ type: Boolean })
+  get selected() {
+    return this._selected;
+  }
+
+  set selected(value) {
+    const oldValue = this._selected;
+    this._selected = value;
+    this.requestUpdate('selected', oldValue);
+  }
+
   static styles = css`
       .container {
           display: flex;
@@ -59,18 +71,37 @@ export class StyledButton extends LitElement {
       .container.enabled:hover {
           cursor: pointer;
           background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white on hover */
+          color: #FFF;
+      }
+      
+      .container.selected {
+          border: 1px solid #FFF;
+          background: #FFF;
+          color: #000;
       }
   `;
 
+  _url = '';
+  @property({type: String})
+  get url() {
+    return this._url;
+  }
+
+  set url(value) {
+    const oldValue = this._url;
+    this._url = value;
+    this.requestUpdate('url', oldValue);
+  }
+
   handleClick() {
     if (this._enabled) {
-      console.log('Clicked!');
+      document.location.href = this._url;
     }
   }
 
   render() {
     return html`
-      <div class="container ${this._enabled ? 'enabled' : 'disabled'}" @click="${this.handleClick}">
+      <div class="container ${this._enabled ? 'enabled' : 'disabled'} ${this._selected ? 'selected' : ''}" @click="${this.handleClick}">
         ${this._text}
       </div>
     `;
