@@ -3,7 +3,11 @@ import { css, html, LitElement } from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {BasePage} from './base-page';
 import '../components/footer-item'
+import '../components/faq-item'
 
+interface Question {
+  [question: string]: string
+}
 @customElement('faq-page')
 export class FaqPage extends BasePage {
   static styles = css`
@@ -19,10 +23,16 @@ export class FaqPage extends BasePage {
           padding: 20px;
           box-sizing: border-box;
           border: 1px solid #ccc;
+          gap: 30px;
+          overflow: auto;
       }
       
-      .mobile-title-text {
+      .faq-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
           gap: 10px;
+          align-self: stretch;
       }
       
       .page-title {
@@ -37,12 +47,29 @@ export class FaqPage extends BasePage {
       }
   `;
 
+
+
+  items = new Map<string, string>([
+    ["What date should I RSVP by?", "We must receive your reply by August 1st, 2024 to ensure we can reserve you a place."],
+    ["Is there parking available near the wedding venue?", "Yes, there is plenty of parking available at the venue!"],
+    ["Is there a dress code?", "The dress code for our wedding is black tie/formal attire. That generally means evening dresses, cocktail dresses, casual suits, slacks, button-downs, and sports coats (ties or no ties) are all perfect."],
+    ["May I bring my children?", "Unfortunately, we cannot host children at our wedding. We appreciate you making arrangements ahead of time and leaving the kids at home so you can celebrate with us."],
+    ["Am I allowed to bring a plus one?", "Our celebration is strictly RSVP only. We will only be able to accommodate those listed on your wedding invitation."],
+    ["What type of food will be served?", "We'll be serving hors d'oeuvres at cocktail hour followed by a sit-down dinner."],
+    ["Will there be meal options for guests with dietary restrictions or allergies?", "Yes, please let us know when you <a href='/rsvp'>RSVP</a>!"],
+    ["Could you suggest places to eat, drink and see while I am in town for your wedding?", "Yes! Please feel free to visit <a href='/accommodations'>this link</a> for all local recommendations."],
+    ["I have more questions about your wedding, who can I contact?", "Please send us an email at <u>tumidanski2024@gmail.com</u>"]
+  ])
+
   mobileRender() {
     return html`
       <div class="content">
         <mobile-header></mobile-header>
-        <div class="mobile-title-text">
+        <div class="faq-content">
           <div class="page-title">Q&A</div>
+          ${Array.from(this.items.entries()).map(([q, a], index, array) => html`
+            <faq-item key="${q}" value="${a}" .separator="${index < array.length - 1}"></faq-item>
+          `)}
         </div>
         <footer-item></footer-item>
       </div>
