@@ -1,7 +1,9 @@
 name: Build and Publish Docker Image
 
 on:
-  push
+  push:
+    paths:
+      - 'web/**'
 
 jobs:
   build-and-publish:
