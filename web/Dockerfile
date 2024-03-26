@@ -20,7 +20,7 @@ RUN npm run build
 FROM nginx:alpine3.18
 
 # Copy the custom Nginx configuration file into the container
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy the built files from the previous stage to the Nginx server directory
 COPY --from=build-env /app/dist /usr/share/nginx/html
