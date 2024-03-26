@@ -7,6 +7,16 @@ services:
   rsvp:
     image: rsvp:latest
     container_name:                         rsvp
+    environment:
+      CSV_FILE_PATH:                        /usr/data/list.csv
+      LOG_LEVEL: ${SERVICE_LOG_LEVEL}
+      DB_USER: ${SERVICE_DB_USER}
+      DB_PASSWORD: ${SERVICE_DB_PASSWORD}
+      DB_HOST: ${SERVICE_DB_HOST}
+      DB_PORT: ${SERVICE_DB_PORT}
+      DB_NAME: rsvp
+    volumes:
+      - ./rsvp/list.csv:/usr/data/list.csv:ro
   nginx:
     image: nginx:latest
     ports:
