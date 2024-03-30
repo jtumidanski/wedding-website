@@ -11,6 +11,11 @@ func (p RestModel) GetID() string {
 	return p.ID
 }
 
+func (p RestModel) SetID(id string) error {
+	p.ID = id
+	return nil
+}
+
 func (p RestModel) GetName() string {
 	return "response"
 }
