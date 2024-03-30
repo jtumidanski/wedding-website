@@ -20,7 +20,7 @@ func entityByHash(hash string) database.EntityProvider[Entity] {
 func getAll() database.EntitySliceProvider[Entity] {
 	return func(db *gorm.DB) model.SliceProvider[Entity] {
 		var results []Entity
-		err := db.Preload("Members").Find(&results).Error
+		err := db.Preload("Members").Preload("Members.Response").Find(&results).Error
 		if err != nil {
 			return model.ErrorSliceProvider[Entity](err)
 		}

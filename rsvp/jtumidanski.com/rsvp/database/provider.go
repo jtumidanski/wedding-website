@@ -30,9 +30,14 @@ func Query[E any](db *gorm.DB, query interface{}) model.Provider[E] {
 	return model.FixedProvider[E](result)
 }
 
-func SliceQuery[E any](db *gorm.DB, query interface{}) model.SliceProvider[E] {
+func SliceQuery[E any](db *gorm.DB, query interface{}, preload string) model.SliceProvider[E] {
 	var results []E
-	err := db.Where(query).Find(&results).Error
+	var err error
+	if preload != "" {
+		err = db.Preload(preload).Where(query).Find(&results).Error
+	} else {
+		err = db.Where(query).Find(&results).Error
+	}
 	if err != nil {
 		return model.ErrorSliceProvider[E](err)
 	}

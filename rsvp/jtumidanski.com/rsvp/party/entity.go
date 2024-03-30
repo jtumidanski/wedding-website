@@ -11,7 +11,6 @@ func Migration(db *gorm.DB) error {
 }
 
 type Entity struct {
-	gorm.Model
 	ID      uuid.UUID       `gorm:"type:uuid;default:uuid_generate_v4()"`
 	Name    string          `gorm:"unique;not null"`
 	Hash    string          `gorm:"unique;not null"`
