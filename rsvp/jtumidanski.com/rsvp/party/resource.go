@@ -24,15 +24,8 @@ func InitResource(si jsonapi.ServerInformation, db *gorm.DB) func(router *mux.Ro
 	return func(router *mux.Router, l logrus.FieldLogger) {
 		router.HandleFunc("/process-csv", registerProcessCSV(si)(l)(db)).Methods(http.MethodPut)
 		r := router.PathPrefix("/parties").Subrouter()
-		//r.HandleFunc("", registerGetAllParties(si)(l)).Methods(http.MethodGet).Queries("include", "{include}")
 		r.HandleFunc("", registerGetAllPartiesByHash(si)(l)(db)).Methods(http.MethodGet).Queries("hash", "{hash}")
 		r.HandleFunc("", registerGetAllParties(si)(l)(db)).Methods(http.MethodGet)
-		//r.HandleFunc("", registerCreateParty(l)).Methods(http.MethodPost)
-		//r.HandleFunc("/{id}", registerGetParty(si)(l)).Methods(http.MethodGet).Queries("include", "{include}")
-		//r.HandleFunc("/{id}", registerGetParty(si)(l)).Methods(http.MethodGet)
-		//r.HandleFunc("/{id}/members", registerGetMembers(si)(l)).Methods(http.MethodGet)
-		//r.HandleFunc("/{id}/members", registerJoinParty(l)).Methods(http.MethodPut)
-		//r.HandleFunc("/{id}/members/{memberId}", registerLeaveParty(l)).Methods(http.MethodDelete)
 	}
 }
 

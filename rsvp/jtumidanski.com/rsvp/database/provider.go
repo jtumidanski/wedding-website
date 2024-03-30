@@ -20,3 +20,21 @@ func ModelSliceProvider[M any, E any](db *gorm.DB) func(ep EntitySliceProvider[E
 		return model.SliceMap(ep(db), t)
 	}
 }
+
+func Query[E any](db *gorm.DB, query interface{}) model.Provider[E] {
+	var result E
+	err := db.Where(query).First(&result).Error
+	if err != nil {
+		return model.ErrorProvider[E](err)
+	}
+	return model.FixedProvider[E](result)
+}
+
+func SliceQuery[E any](db *gorm.DB, query interface{}) model.SliceProvider[E] {
+	var results []E
+	err := db.Where(query).Find(&results).Error
+	if err != nil {
+		return model.ErrorSliceProvider[E](err)
+	}
+	return model.FixedSliceProvider(results)
+}

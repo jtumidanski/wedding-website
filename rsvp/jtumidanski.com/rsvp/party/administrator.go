@@ -49,11 +49,10 @@ func addMember(db *gorm.DB) func(hash string, firstName string, lastName string)
 func modelFromEntity(a Entity) (Model, error) {
 	ms := make([]member.Model, 0)
 	for _, m := range a.Members {
-		ms = append(ms, member.Model{
-			ID:        m.ID.String(),
-			FirstName: m.FirstName,
-			LastName:  m.LastName,
-		})
+		mm, err := member.MakeMember(m)
+		if err != nil {
+			ms = append(ms, mm)
+		}
 	}
 	return Model{
 		ID:      a.ID.String(),
