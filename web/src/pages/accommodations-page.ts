@@ -40,7 +40,7 @@ export class AccommodationsPage extends BasePage {
       .page-title {
           color: #FFF;
           text-align: center;
-          font-family: "Bodoni 72 Smallcaps";
+          font-family: "Bodoni 72 Smallcaps", serif;
           font-size: 40px;
           font-style: normal;
           font-weight: 400;

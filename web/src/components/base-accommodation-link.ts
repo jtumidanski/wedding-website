@@ -20,7 +20,7 @@ export class BaseAccommodationLink extends LitElement {
       .name {
           color: #FFF;
           text-align: center;
-          font-family: "Bodoni 72";
+          font-family: "Bodoni 72 Smallcaps", serif;
           font-size: 16px;
           font-style: normal;
           font-weight: 400;

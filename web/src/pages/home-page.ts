@@ -11,7 +11,7 @@ import {BasePage} from './base-page';
 
 @customElement('home-page')
 export class HomePage extends BasePage {
-  static styles = css`
+  static styles = css`      
       .content {
           z-index: 1;
           color: white;
@@ -50,11 +50,24 @@ export class HomePage extends BasePage {
       }
 
       .date-text {
-          font-family: "Bodoni 72 Smallcaps";
-          font-size: 52px;
+          font-family: "Bodoni 72 Smallcaps", serif;
+          font-size: 40px;
           font-weight: 400;
           line-height: 47px;
           text-align: center;
+          letter-spacing: 2.8px;
+      }
+
+      .date-text .sup {
+          position: relative;
+          top: -0.4em;
+          font-size: 80%;
+      }
+
+      .date-text.desktop {
+          font-size: 72px;
+          line-height: 72px; /* 100% */
+          letter-spacing: 9.36px;
       }
 
       .hour-frame {
@@ -124,7 +137,7 @@ export class HomePage extends BasePage {
         <mobile-header></mobile-header>
         <div class="wedding-intro">
           <div class="normal-text">Please join Abigail & Justin</div>
-          <div class="date-text">August 30th 2024</div>
+          <div class="date-text">August 30<sup>th</sup> 2024</div>
           <div class="normal-text">To celebrate their wedding</div>
         </div>
         <styled-button class="mobile-button" text="RSVP"></styled-button>
@@ -151,7 +164,7 @@ export class HomePage extends BasePage {
         <div class="desktop-info-container">
           <div class="wedding-intro">
             <div class="normal-text desktop">Please join Abigail & Justin</div>
-            <div class="date-text">August 30th 2024</div>
+            <div class="date-text desktop">August 30<sup>th</sup> 2024</div>
             <div class="normal-text desktop">To celebrate their wedding</div>
           </div>
           <div class="desktop-detail-container">
