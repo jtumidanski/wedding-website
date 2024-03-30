@@ -25,6 +25,7 @@ func InitResource(si jsonapi.ServerInformation, db *gorm.DB) func(router *mux.Ro
 		router.HandleFunc("/process-csv", registerProcessCSV(si)(l)(db)).Methods(http.MethodPut)
 		r := router.PathPrefix("/parties").Subrouter()
 		//r.HandleFunc("", registerGetAllParties(si)(l)).Methods(http.MethodGet).Queries("include", "{include}")
+		r.HandleFunc("", registerGetAllPartiesByHash(si)(l)(db)).Methods(http.MethodGet).Queries("hash", "{hash}")
 		r.HandleFunc("", registerGetAllParties(si)(l)(db)).Methods(http.MethodGet)
 		//r.HandleFunc("", registerCreateParty(l)).Methods(http.MethodPost)
 		//r.HandleFunc("/{id}", registerGetParty(si)(l)).Methods(http.MethodGet).Queries("include", "{include}")
@@ -49,6 +50,51 @@ func handleGetAllParties(si jsonapi.ServerInformation) func(l logrus.FieldLogger
 			return func(span opentracing.Span) http.HandlerFunc {
 				return func(w http.ResponseWriter, r *http.Request) {
 					parties, err := GetAll(l, db)
+					if err != nil {
+						l.WithError(err).Errorf("Unable to retrieve all parties for request.")
+						w.WriteHeader(http.StatusInternalServerError)
+						return
+					}
+
+					res, err := jsonapi.MarshalWithURLs(TransformAll(parties), si)
+					if err != nil {
+						l.WithError(err).Errorf("Unable to marshal models.")
+						w.WriteHeader(http.StatusInternalServerError)
+						return
+					}
+					_, err = w.Write(res)
+					if err != nil {
+						l.WithError(err).Errorf("Unable to write response.")
+						w.WriteHeader(http.StatusInternalServerError)
+						return
+					}
+				}
+			}
+		}
+	}
+}
+
+func registerGetAllPartiesByHash(si jsonapi.ServerInformation) func(l logrus.FieldLogger) func(db *gorm.DB) http.HandlerFunc {
+	return func(l logrus.FieldLogger) func(db *gorm.DB) http.HandlerFunc {
+		return func(db *gorm.DB) http.HandlerFunc {
+			return rest.RetrieveSpan(GetAllParties, handleGetAllPartiesByHash(si)(l)(db))
+		}
+	}
+}
+
+func handleGetAllPartiesByHash(si jsonapi.ServerInformation) func(l logrus.FieldLogger) func(db *gorm.DB) rest.SpanHandler {
+	return func(l logrus.FieldLogger) func(db *gorm.DB) rest.SpanHandler {
+		return func(db *gorm.DB) rest.SpanHandler {
+			return func(span opentracing.Span) http.HandlerFunc {
+				return func(w http.ResponseWriter, r *http.Request) {
+					hash, ok := mux.Vars(r)["hash"]
+					if !ok {
+						l.Errorf("Unable to properly parse hash from path.")
+						w.WriteHeader(http.StatusBadRequest)
+						return
+					}
+
+					parties, err := GetAllByHash(l, db)(hash)
 					if err != nil {
 						l.WithError(err).Errorf("Unable to retrieve all parties for request.")
 						w.WriteHeader(http.StatusInternalServerError)

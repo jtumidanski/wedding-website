@@ -55,3 +55,16 @@ func byHashProvider(db *gorm.DB) func(hash string) model.Provider[Model] {
 func GetAll(_ logrus.FieldLogger, db *gorm.DB) ([]Model, error) {
 	return database.ModelSliceProvider[Model, Entity](db)(getAll(), modelFromEntity)()
 }
+
+func MatchHashFilter(hash string) func(model Model) bool {
+	return func(model Model) bool {
+		return model.Hash == hash
+	}
+}
+
+func GetAllByHash(_ logrus.FieldLogger, db *gorm.DB) func(hash string) ([]Model, error) {
+	return func(hash string) ([]Model, error) {
+		allProvider := database.ModelSliceProvider[Model, Entity](db)(getAll(), modelFromEntity)
+		return model.FilteredProvider(allProvider, MatchHashFilter(hash))()
+	}
+}
