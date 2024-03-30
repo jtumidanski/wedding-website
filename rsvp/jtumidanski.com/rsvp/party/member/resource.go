@@ -21,9 +21,9 @@ func InitResource(si jsonapi.ServerInformation, db *gorm.DB) func(router *mux.Ro
 	}
 }
 
-type IdHandler func(partyId string) http.HandlerFunc
+type PartyIdHandler func(partyId string) http.HandlerFunc
 
-func ParseId(l logrus.FieldLogger, next IdHandler) http.HandlerFunc {
+func ParsePartyId(l logrus.FieldLogger, next PartyIdHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		partyId, ok := mux.Vars(r)["partyId"]
 		if !ok {
@@ -39,7 +39,7 @@ func registerGetMembers(si jsonapi.ServerInformation) func(l logrus.FieldLogger)
 	return func(l logrus.FieldLogger) func(db *gorm.DB) http.HandlerFunc {
 		return func(db *gorm.DB) http.HandlerFunc {
 			return rest.RetrieveSpan(GetMembers, func(span opentracing.Span) http.HandlerFunc {
-				return ParseId(l, func(partyId string) http.HandlerFunc {
+				return ParsePartyId(l, func(partyId string) http.HandlerFunc {
 					return handleGetMembers(si)(l)(db)(span)(partyId)
 				})
 			})

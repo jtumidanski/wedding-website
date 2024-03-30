@@ -60,7 +60,7 @@ func main() {
 
 	db := database.Connect(l, database.SetMigrations(party.Migration, response.Migration, member.Migration))
 
-	rest.CreateService(l, ctx, wg, GetServer().GetPrefix(), party.InitResource(GetServer(), db), member.InitResource(GetServer(), db))
+	rest.CreateService(l, ctx, wg, GetServer().GetPrefix(), party.InitResource(GetServer(), db), member.InitResource(GetServer(), db), response.InitResource(GetServer(), db))
 
 	// trap sigterm or interrupt and gracefully shutdown the server
 	c := make(chan os.Signal, 1)
