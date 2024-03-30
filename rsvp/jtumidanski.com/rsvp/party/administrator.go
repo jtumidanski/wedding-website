@@ -10,7 +10,7 @@ func create(db *gorm.DB) func(name string, hash string, firstName string, lastNa
 		e := &Entity{
 			Name: name,
 			Hash: hash,
-			Members: []MemberEntity{
+			Members: []member.Entity{
 				{
 					FirstName: firstName,
 					LastName:  lastName,
@@ -35,7 +35,7 @@ func addMember(db *gorm.DB) func(hash string, firstName string, lastName string)
 			return Model{}, err
 		}
 
-		newMember := MemberEntity{FirstName: firstName, LastName: lastName}
+		newMember := member.Entity{FirstName: firstName, LastName: lastName}
 		results.Members = append(results.Members, newMember)
 		err = db.Save(&results).Error
 		if err != nil {
@@ -50,6 +50,7 @@ func modelFromEntity(a Entity) (Model, error) {
 	ms := make([]member.Model, 0)
 	for _, m := range a.Members {
 		ms = append(ms, member.Model{
+			ID:        m.ID.String(),
 			FirstName: m.FirstName,
 			LastName:  m.LastName,
 		})

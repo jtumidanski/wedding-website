@@ -1,14 +1,13 @@
 package member
 
-import "fmt"
-
 type RestModel struct {
+	ID        string `json:"id"`
 	FirstName string `json:"first-name"`
 	LastName  string `json:"last-name"`
 }
 
 func (p RestModel) GetID() string {
-	return fmt.Sprintf("%s-%s", p.FirstName, p.LastName)
+	return p.ID
 }
 
 func (p RestModel) GetName() string {
@@ -17,6 +16,7 @@ func (p RestModel) GetName() string {
 
 func Transform(model Model) RestModel {
 	return RestModel{
+		ID:        model.ID,
 		FirstName: model.FirstName,
 		LastName:  model.LastName,
 	}
