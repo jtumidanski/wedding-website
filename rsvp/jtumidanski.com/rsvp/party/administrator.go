@@ -2,6 +2,7 @@ package party
 
 import (
 	"gorm.io/gorm"
+	"jtumidanski.com/rsvp/party/member"
 )
 
 func create(db *gorm.DB) func(name string, hash string, firstName string, lastName string) (Model, error) {
@@ -46,16 +47,17 @@ func addMember(db *gorm.DB) func(hash string, firstName string, lastName string)
 }
 
 func modelFromEntity(a Entity) (Model, error) {
-	ms := make([]MemberModel, 0)
+	ms := make([]member.Model, 0)
 	for _, m := range a.Members {
-		ms = append(ms, MemberModel{
+		ms = append(ms, member.Model{
 			FirstName: m.FirstName,
 			LastName:  m.LastName,
 		})
 	}
 	return Model{
-		ID:      a.Hash,
+		ID:      a.ID.String(),
 		Name:    a.Name,
+		Hash:    a.Hash,
 		Members: ms,
 	}, nil
 }

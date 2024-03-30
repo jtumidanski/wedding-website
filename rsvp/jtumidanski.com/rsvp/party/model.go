@@ -1,12 +1,10 @@
 package party
 
+import "jtumidanski.com/rsvp/party/member"
+
 type Model struct {
 	ID      string
 	Name    string
-	Members []MemberModel
-}
-
-type MemberModel struct {
-	FirstName string
-	LastName  string
+	Hash    string
+	Members []member.Model
 }

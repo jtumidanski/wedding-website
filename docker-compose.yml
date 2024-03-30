@@ -15,6 +15,7 @@ services:
       DB_HOST: ${SERVICE_DB_HOST}
       DB_PORT: ${SERVICE_DB_PORT}
       DB_NAME: rsvp
+      JAEGER_HOST_PORT:                     ${SERVICE_JAEGER_HOST}
     volumes:
       - ./rsvp/list.csv:/usr/data/list.csv:ro
   nginx:

@@ -2,123 +2,72 @@
 package main
 
 import (
-	"encoding/csv"
-	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
+	"context"
 	"jtumidanski.com/rsvp/database"
 	"jtumidanski.com/rsvp/logger"
 	"jtumidanski.com/rsvp/party"
+	"jtumidanski.com/rsvp/rest"
+	"jtumidanski.com/rsvp/tracing"
+	"os/signal"
+	"sync"
+	"syscall"
 
-	"github.com/manyminds/api2go/jsonapi"
-	"hash/fnv"
 	"io"
-	"log"
-	"net/http"
 	"os"
 )
 
+const serviceName = "rsvp"
+
+type Server struct {
+	baseUrl string
+	prefix  string
+}
+
+func (s Server) GetBaseURL() string {
+	return s.baseUrl
+}
+
+func (s Server) GetPrefix() string {
+	return s.prefix
+}
+
+func GetServer() Server {
+	return Server{
+		baseUrl: "",
+		prefix:  "/api/rsvp",
+	}
+}
+
 func main() {
-	l := logger.CreateLogger("rsvp")
+	l := logger.CreateLogger(serviceName)
 	l.Infoln("Starting main service.")
+
+	wg := &sync.WaitGroup{}
+	ctx, cancel := context.WithCancel(context.Background())
+
+	tc, err := tracing.InitTracer(l)(serviceName)
+	if err != nil {
+		l.WithError(err).Fatal("Unable to initialize tracer.")
+	}
+	defer func(tc io.Closer) {
+		err = tc.Close()
+		if err != nil {
+			l.WithError(err).Errorf("Unable to close tracer.")
+		}
+	}(tc)
 
 	db := database.Connect(l, database.SetMigrations(party.Migration))
 
-	r := mux.NewRouter()
-	r.HandleFunc("/api/rsvp/process-csv", processCSVHandler(l, db)).Methods(http.MethodPut)
+	rest.CreateService(l, ctx, wg, GetServer().GetPrefix(), party.InitResource(GetServer(), db))
 
-	log.Println("Server starting on :8080")
-	if err := http.ListenAndServe(":8080", r); err != nil {
-		log.Fatalf("Error starting server: %v", err)
-	}
-}
+	// trap sigterm or interrupt and gracefully shutdown the server
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGTERM)
 
-func processCSVHandler(l logrus.FieldLogger, db *gorm.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		csvFilePath := os.Getenv("CSV_FILE_PATH")
-		if csvFilePath == "" {
-			http.Error(w, "CSV file path is not set", http.StatusInternalServerError)
-			return
-		}
-
-		processCSV(l, db)(csvFilePath, w)
-	}
-}
-
-func processCSV(l logrus.FieldLogger, db *gorm.DB) func(csvFilePath string, w http.ResponseWriter) {
-	return func(csvFilePath string, w http.ResponseWriter) {
-		file, err := os.Open(csvFilePath)
-		if err != nil {
-			http.Error(w, "Error opening CSV file", http.StatusInternalServerError)
-			return
-		}
-		defer file.Close()
-
-		reader := csv.NewReader(file)
-		reader.Read() // Skip the header row
-
-		parties := make(map[string]int)
-		for {
-			record, err := reader.Read()
-			if err == io.EOF {
-				break
-			}
-			if err != nil {
-				l.WithError(err).Errorf("Error reading CSV record.")
-				http.Error(w, "Error reading CSV record", http.StatusInternalServerError)
-				return
-			}
-
-			firstName, lastName, partyName := record[0], record[1], record[2]
-			hash := fmt.Sprintf("%x", fnv32(partyName))[:4]
-
-			if _, ok := parties[hash]; !ok {
-				_, _ = party.Create(l, db)(partyName, hash, firstName, lastName)
-			} else {
-				_, _ = party.AddMember(l, db)(hash, firstName, lastName)
-			}
-			parties[hash] = 1
-		}
-
-		ps, err := party.GetAll(l, db)
-		if err != nil {
-			l.WithError(err).Errorf("Unable to retrieve parties.")
-			http.Error(w, "Unable to retrieve parties", http.StatusInternalServerError)
-			return
-		}
-
-		r := make([]party.RestModel, 0)
-		for _, p := range ps {
-			rs := make([]party.RestMember, 0)
-			for _, m := range p.Members {
-				rs = append(rs, party.RestMember{
-					FirstName: m.FirstName,
-					LastName:  m.LastName,
-				})
-			}
-
-			r = append(r, party.RestModel{
-				ID:      p.ID,
-				Name:    p.Name,
-				Members: rs,
-			})
-		}
-
-		jsonData, err := jsonapi.Marshal(r)
-		if err != nil {
-			http.Error(w, "Error marshalling JSON", http.StatusInternalServerError)
-			return
-		}
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/vnd.api+json")
-		w.Write(jsonData)
-	}
-}
-
-// fnv32 generates a 32-bit FNV-1a hash and returns the hash as a uint32
-func fnv32(key string) uint32 {
-	algorithm := fnv.New32a()
-	algorithm.Write([]byte(key))
-	return algorithm.Sum32()
+	// Block until a signal is received.
+	sig := <-c
+	l.Infof("Initiating shutdown with signal %s.", sig)
+	cancel()
+	wg.Wait()
+	l.Infoln("Service shutdown.")
 }
