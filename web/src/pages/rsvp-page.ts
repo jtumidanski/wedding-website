@@ -141,7 +141,7 @@ export class HomePage extends BasePage {
       }
 
       digit-input.mobile {
-          --magic-number: 70px;
+          --magic-number: 60px;
       }
       
       .single-button.desktop {
