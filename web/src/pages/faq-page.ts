@@ -67,37 +67,20 @@ export class FaqPage extends BasePage {
     ["I have more questions about your wedding, who can I contact?", "Please send us an email at <u>tumidanski2024@gmail.com</u>"]
   ])
 
-  mobileRender() {
-    return html`
-      <div class="content">
-        <mobile-header></mobile-header>
-        <div class="faq-content">
-          <div class="page-title">Q&A</div>
-          ${Array.from(this.items.entries()).map(([q, a], index, array) => html`
-            <faq-item key="${q}" value="${a}" .separator="${index < array.length - 1}"></faq-item>
-          `)}
-        </div>
-        <footer-item></footer-item>
-      </div>
-    `;
-  }
-
-  desktopRender() {
-    return html`
-      <div class="content">
-        <desktop-header selected="2"></desktop-header>
-        <div class="faq-content">
-          <div class="page-title desktop">Q&A</div>
-          ${Array.from(this.items.entries()).map(([q, a], index, array) => html`
-            <faq-item key="${q}" value="${a}" .separator="${index < array.length - 1}" desktop></faq-item>
-          `)}
-        </div>
-        <footer-item></footer-item>
-      </div>
-    `;
-  }
-
   render() {
-    return this.isMobile ? this.mobileRender() : this.desktopRender();
+    return html`
+      <div class="content">
+        ${this.isMobile ?
+      html`<mobile-header></mobile-header>` :
+      html`<desktop-header selected="2"></desktop-header>`}
+        <div class="faq-content">
+          <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">Q&A</div>
+          ${Array.from(this.items.entries()).map(([q, a], index, array) => html`
+            <faq-item key="${q}" value="${a}" .separator="${index < array.length - 1}" ?desktop="${!this.isMobile}"></faq-item>
+          `)}
+        </div>
+        <footer-item></footer-item>
+      </div>
+    `;
   }
 }
