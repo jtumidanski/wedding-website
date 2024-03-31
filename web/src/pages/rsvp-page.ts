@@ -13,7 +13,7 @@ import '../components/allergy-prompt-item';
 import '../components/allergy-detail-item';
 import '../components/navigate-styled-button'
 import {BasePage} from './base-page';
-import {GetParty, PartyResponse} from '../services/party-service';
+import {GetParty, PartyResponse, updateAllMemberResponse, updateMemberResponse} from '../services/party-service';
 
 
 @customElement('rsvp-page')
@@ -282,8 +282,33 @@ export class HomePage extends BasePage {
   }
 
   private _allergyDetailChanged(e: CustomEvent) {
-    console.log(e.detail.allergies);
+    this._updateMemberAllergy(e.detail.member_id, e.detail.allergies);
     this.requestUpdate();
+  }
+
+  private _updateMemberAllergy(memberId: string, value: string[]) {
+    this._party = {
+      ...this._party,
+      data: this._party.data.map(party => ({
+        ...party,
+        attributes: {
+          ...party.attributes,
+          members: party.attributes.members.map(member => {
+            if (member.id === memberId) {
+              return {
+                ...member,
+                response: {
+                  ...member.response,
+                  allergies: value
+                }
+              };
+            } else {
+              return member;
+            }
+          })
+        }
+      }))
+    };
   }
   private _attendeesHaveEntree() {
     return !this._party.data.flatMap(p => p.attributes.members).filter(m => m.response.attending).some(m => m.response.entree === '')
@@ -305,11 +330,17 @@ export class HomePage extends BasePage {
 
   private _handleForward(event: any) {
     if (this._state == 4 || (this._state == 3 && this._allergyPrompt.length == 0)) {
-      // send confirmation
-      this._state = 999;
+      let members = this._party.data.flatMap(p => p.attributes.members);
+      updateAllMemberResponse(members).then(this._moveToConfirmState);
+      return;
     } else {
       this._state +=1;
     }
+    this.requestUpdate();
+  }
+
+  private _moveToConfirmState = () => {
+    this._state = 999;
     this.requestUpdate();
   }
 
@@ -326,16 +357,10 @@ export class HomePage extends BasePage {
     this.requestUpdate();
   };
 
-  _keepFocus() {
-    setTimeout(() => {
-      const inputElement = this.shadowRoot!.querySelector('#hash-input') as HTMLInputElement;
-      inputElement.focus();
-    }, 0);
-  }
-
-  updated() {
-    const inputElement = this.shadowRoot!.querySelector("#hash-input") as HTMLInputElement;
-    inputElement.focus();
+  handleKeyDown(event: any) {
+    if (event.key === 'Enter' && this._fullHash) {
+      this._handleHashConfirm(event);
+    }
   }
 
   desktopRenderCodeInput() {
@@ -347,7 +372,7 @@ export class HomePage extends BasePage {
           <div class="joy-message desktop">
             Please enter your RSVP code
           </div>
-          <digit-input id="hash-input" @value-changed=${this._hashValueListener} @blur="${this._keepFocus}"></digit-input>
+          <digit-input id="hash-input" @value-changed=${this._hashValueListener} @keydown=${this.handleKeyDown}></digit-input>
           <styled-button text="confirm" style="width: 400px" .enabled=${this._fullHash}
                          @user-clicked=${this._handleHashConfirm}></styled-button>
         </div>

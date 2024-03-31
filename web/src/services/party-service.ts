@@ -1,3 +1,5 @@
+
+const baseUri = `http://127.0.0.1/api/rsvp/`
 export interface PartyResponse {
   data: Party[];
 }
@@ -29,7 +31,7 @@ export interface Response {
 }
 
 export async function GetParty(hash: string): Promise<PartyResponse> {
-  const url = `http://127.0.0.1/api/rsvp/parties?hash=${hash}`;
+  const url = baseUri + `parties?hash=${hash}`;
 
   try {
     const response = await fetch(url);
@@ -37,5 +39,52 @@ export async function GetParty(hash: string): Promise<PartyResponse> {
   } catch (error) {
     console.error('Error fetching RSVP data:', error);
     return {data: []};
+  }
+}
+
+export async function updateAllMemberResponse(members: Member[]): Promise<void> {
+  try {
+    // Map each member to a Promise representing the PATCH request
+    const patchPromises = members.map(async (member) => {
+      const memberId = member.id;
+      await updateMemberResponse(memberId, member.response);
+    });
+
+    // Wait for all PATCH requests to complete
+    await Promise.all(patchPromises);
+  } catch (error) {
+    console.error('Error while patching member responses:', error);
+  }
+}
+
+export async function updateMemberResponse(memberId: string, input: Response): Promise<void> {
+  try {
+    const url = baseUri + `members/${memberId}/response`;
+
+    const requestOptions: RequestInit = {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        data: {
+          type: "response",
+          id: input.id,
+          attributes: {
+            attending: input.attending,
+            entree: input.entree,
+            allergies: input.allergies
+          }
+        },
+      }),
+    };
+
+    const response = await fetch(url, requestOptions);
+
+    if (!response.ok) {
+      throw new Error(`Failed to patch member response (${response.status} ${response.statusText})`);
+    }
+  } catch (error) {
+    console.error('Error while patching member response:', error);
   }
 }

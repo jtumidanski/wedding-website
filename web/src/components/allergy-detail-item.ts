@@ -1,47 +1,90 @@
 // mobile-header.ts
 import {html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, state} from 'lit/decorators.js';
 import {BaseResponseItem} from './base-response-item';
 
 @customElement('allergy-detail-item')
 export class AllergyDetailItem extends BaseResponseItem {
-  _allergies: string[] = [];
-  @property({type: String})
-  get allergies() {
-    return this._allergies.join(',');
+  @property({type: String}) allergies = '';
+  @state() private _allergies: string[] = [];
+
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    if (changedProperties.has('allergies')) {
+      this._updateAllergiesArray();
+    }
   }
 
-  set allergies(value) {
-    const oldValue = this._allergies;
-    if (value === '') {
-      this._allergies = [];
-    } else {
-      this._allergies = value.split(',');
+  private _updateAllergiesArray(): void {
+    this._allergies = this.allergies.split(',').map(a => a.trim());
+    this.showOther = this.findNonStandardAllergy() !== undefined;
+  }
+
+  handleOptionChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const checkboxId = target.id;
+    const isChecked = target.checked;
+    if (checkboxId === 'other') {
+      let newAllergiesSet = this._allergies.filter(i => this.items.includes(i));
+      if (isChecked) {
+        newAllergiesSet.push('');
+      }
+      this.allergies = newAllergiesSet.join(',');
+      this._updateAllergiesArray();
+      const options = {
+        detail: {member_id: this._member_id, allergies: this._allergies},
+        bubbles: true,
+        composed: true,
+      };
+      this.dispatchEvent(new CustomEvent('value-changed', options));
+
+      this.showOther = isChecked;
+      this.requestUpdate();
+      return;
     }
+
+    let newAllergiesSet = new Set(this._allergies);
+
+    if (isChecked) {
+      newAllergiesSet.add(checkboxId);
+    } else {
+      newAllergiesSet.delete(checkboxId);
+    }
+
+    this.allergies = Array.from(newAllergiesSet).join(',');
+    this._updateAllergiesArray();
     const options = {
       detail: {member_id: this._member_id, allergies: this._allergies},
       bubbles: true,
       composed: true,
     };
     this.dispatchEvent(new CustomEvent('value-changed', options));
-    this.requestUpdate('allergies', oldValue);
+  };
+
+  private onNotesChange(event: Event): void {
+    const textarea = event.target as HTMLTextAreaElement;
+    // this.notes = textarea.value;
+    let filteredArray = this._allergies.filter(i => this.items.includes(i));
+    let newAllergiesSet = [...new Set(filteredArray)]
+    newAllergiesSet.push(textarea.value.split(",").join(""));
+    this.allergies = newAllergiesSet.join(',');
+    this._updateAllergiesArray();
+    const options = {
+      detail: {member_id: this._member_id, allergies: this._allergies},
+      bubbles: true,
+      composed: true,
+    };
+    this.dispatchEvent(new CustomEvent('value-changed', options));
   }
 
-  handleOptionChange(event: Event) {
-    const target = event.target as HTMLInputElement;
-    const checkboxId = target.id;
-    const isChecked = target.checked;
-    if (checkboxId === 'other') {
-      this.showOther = isChecked;
-      this.requestUpdate();
-      return;
+  private findNonStandardAllergy() {
+    if (this.allergies.length == 0) {
+      return undefined;
     }
+    return this.allergies.split(',').find(a => !this.items.includes(a));
+  }
 
-    // if (isChecked) {
-    //   this.allergies = this.allergies + "," + checkboxId;
-    // } else {
-    //   this.allergies = this._allergies.filter(id => id === checkboxId).join(",");
-    // }
+  private hasNonStandardAllergy() {
+    return this.findNonStandardAllergy() !== undefined;
   }
 
   showOther: boolean = false;
@@ -64,11 +107,13 @@ export class AllergyDetailItem extends BaseResponseItem {
           `)}
           <div class="custom-checkbox">
             <input type="checkbox" id="other" name="drone" value="other" @change=${this.handleOptionChange}
-                   ?checked=${this.allergies.split(',').some(a => a === 'other')}/>
+                   ?checked=${this.hasNonStandardAllergy()}/>
             <label for="other">other</label>
           </div>
         </div>
-        ${this.showOther ? html`<textarea name="other-allergies"></textarea>` : html``}
+        ${this.hasNonStandardAllergy() || this.showOther ? html`<textarea
+          id="other-allergies"
+          @input=${this.onNotesChange}>${this.findNonStandardAllergy()}</textarea>` : html``}
       </div>
     `;
   }
