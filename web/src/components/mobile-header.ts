@@ -14,13 +14,21 @@ export class MobileHeader extends LitElement {
           flex-direction: column;
           align-items: center;
       }
+
+      logo-icon {
+          cursor: pointer;
+      }
   `;
+
+  handleClick() {
+    document.location.href = "/";
+  }
 
   render() {
     return html`
       <navigation-menu></navigation-menu>
       <div class="mobile-header">
-        <logo-icon></logo-icon>
+        <logo-icon @click="${this.handleClick}"></logo-icon>
       </div>
     `;
   }
