@@ -1,5 +1,5 @@
 
-const baseUri = `http://127.0.0.1/api/rsvp/`
+const baseUri = `https://wedding.tumidanski.com/api/rsvp/`
 export interface PartyResponse {
   data: Party[];
 }
