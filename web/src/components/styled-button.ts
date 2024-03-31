@@ -81,21 +81,14 @@ export class StyledButton extends LitElement {
       }
   `;
 
-  _url = '';
-  @property({type: String})
-  get url() {
-    return this._url;
-  }
-
-  set url(value) {
-    const oldValue = this._url;
-    this._url = value;
-    this.requestUpdate('url', oldValue);
-  }
-
   handleClick() {
     if (this._enabled) {
-      document.location.href = this._url;
+      const options = {
+        detail: {},
+        bubbles: true,
+        composed: true
+      };
+      this.dispatchEvent(new CustomEvent('user-clicked', options));
     }
   }
 

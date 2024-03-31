@@ -3,14 +3,14 @@ import {css, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import '../components/mobile-header';
 import '../components/desktop-header'
-import '../components/styled-button';
+import '../components/navigate-styled-button';
 import '../components/itinerary-item';
 import '../components/footer-item'
 import {BasePage} from './base-page';
 
 
 @customElement('home-page')
-export class HomePage extends BasePage {
+export class ReservationPage extends BasePage {
   static styles = css`      
       .content {
           z-index: 1;
@@ -140,7 +140,7 @@ export class HomePage extends BasePage {
           <div class="date-text">August 30<sup>th</sup> 2024</div>
           <div class="normal-text">To celebrate their wedding</div>
         </div>
-        <styled-button class="mobile-button" text="RSVP"></styled-button>
+        <navigate-styled-button class="mobile-button" text="RSVP"></navigate-styled-button>
         <div class="wedding-info">
           <div class="normal-text">Ceremony & reception to be celebrated at</div>
           <div class="normal-text bold">Bay pointe woods</div>
