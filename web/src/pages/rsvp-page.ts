@@ -93,31 +93,6 @@ export class HomePage extends BasePage {
           text-transform: uppercase;
       }
 
-      .accommodations-text {
-          color: #FFF;
-          text-align: center;
-          font-family: Avenir, sans-serif;
-          font-size: 16px;
-          font-style: normal;
-          font-weight: 400;
-          line-height: normal;
-          white-space: pre-line;
-      }
-
-      .accommodations-text.desktop {
-          font-size: 18px;
-      }
-
-      .accommodations.mobile {
-          padding: 10px;
-          column-count: 2;
-      }
-
-      .accommodations.desktop {
-          padding: 100px;
-          column-count: 4;
-      }
-
       .member-response-container {
           display: flex;
           justify-content: center;
@@ -187,7 +162,24 @@ export class HomePage extends BasePage {
   `;
 
   render() {
-    return this.isMobile ? this.mobileRender() : this.desktopRender();
+    switch (this._state) {
+      case -1:
+        return this.renderCodeBad();
+      case 0:
+        return this.renderCodeInput();
+      case 1:
+        return this.renderAttendance();
+      case 2:
+        return this.renderEntree();
+      case 3:
+        return this.renderAllergyPrompt();
+      case 4:
+        return this.renderAllergyDetail();
+      case 999:
+        return this.renderComplete();
+      default:
+        return html``;
+    }
   }
 
   _state = 0;
@@ -197,48 +189,6 @@ export class HomePage extends BasePage {
   _allergyPrompt: string[] = [];
   _processedAttendance = false;
   _processedEntree = false;
-
-  mobileRender() {
-    switch (this._state) {
-      case -1:
-        return this.renderCodeBad();
-      case 0:
-        return this.renderCodeInput();
-      case 1:
-        return this.renderAttendance();
-      case 2:
-        return this.mobileRenderEntree();
-      case 3:
-        return this.mobileRenderAllergyPrompt();
-      case 4:
-        return this.mobileRenderAllergyDetail();
-      case 999:
-        return this.renderComplete();
-      default:
-        return html``;
-    }
-  }
-
-  desktopRender() {
-    switch (this._state) {
-      case -1:
-        return this.renderCodeBad();
-      case 0:
-        return this.renderCodeInput();
-      case 1:
-        return this.renderAttendance();
-      case 2:
-        return this.desktopRenderEntree();
-      case 3:
-        return this.desktopRenderAllergyPrompt();
-      case 4:
-        return this.desktopRenderAllergyDetail();
-      case 999:
-        return this.renderComplete();
-      default:
-        return html``;
-    }
-  }
 
   private _hashValueListener(e: CustomEvent) {
     this._hashValue = e.detail.value;
@@ -490,19 +440,21 @@ export class HomePage extends BasePage {
     `;
   }
 
-  desktopRenderEntree() {
+  renderEntree() {
     return html`
       <div class="content">
-        <desktop-header selected="0"></desktop-header>
+        ${this.isMobile ?
+          html`<mobile-header></mobile-header>` :
+          html`<desktop-header selected="0"></desktop-header>`}
         <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
-            <div class="page-title desktop">RSVP</div>
-            <div class="joy-message desktop">
+            <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
+            <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
               Dinner Selection
             </div>
           </div>
           <div>
-            <div class="member-response-container">
+            <div class="member-response-container ${this.isMobile ? 'mobile' : 'desktop'}">
               ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
                 <entree-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
                              entree="${a.response.entree}"
@@ -513,9 +465,9 @@ export class HomePage extends BasePage {
             </div>
           </div>
           <div class="buttons">
-            <styled-button text="back" style="width: 400px" enabled
+            <styled-button text="back" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
                            @user-clicked=${this._handleBack}></styled-button>
-            <styled-button text="next" style="width: 400px" .enabled=${this._processedEntree}
+            <styled-button text="next" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" .enabled=${this._processedEntree}
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
         </div>
@@ -526,55 +478,21 @@ export class HomePage extends BasePage {
     `;
   }
 
-  mobileRenderEntree() {
+  renderAllergyPrompt() {
     return html`
       <div class="content">
-        <mobile-header></mobile-header>
+        ${this.isMobile ?
+          html`<mobile-header></mobile-header>` :
+          html`<desktop-header selected="0"></desktop-header>`}
         <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
-            <div class="page-title">RSVP</div>
-            <div class="joy-message">
-              Dinner Selection
-            </div>
-          </div>
-          <div>
-            <div class="member-response-container mobile">
-              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
-                <entree-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
-                             entree="${a.response.entree}"
-                             ?attending=${a.response.attending} @value-changed=${this._entreeChanged}></entree-item>
-                ${index < array.length - 1 ? html`
-                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
-              `)}
-            </div>
-          </div>
-          <div class="buttons">
-            <styled-button text="back" style="width: 100%" enabled
-                           @user-clicked=${this._handleBack}></styled-button>
-            <styled-button text="next" style="width: 100%" .enabled=${this._processedEntree}
-                           @user-clicked=${this._handleForward}></styled-button>
-          </div>
-        </div>
-        <div>
-        </div>
-        <footer-item></footer-item>
-      </div>
-    `;
-  }
-
-  desktopRenderAllergyPrompt() {
-    return html`
-      <div class="content">
-        <desktop-header selected="0"></desktop-header>
-        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
-          <div class="title-text">
-            <div class="page-title desktop">RSVP</div>
-            <div class="joy-message desktop">
+            <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
+            <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
               Food Allergies
             </div>
           </div>
           <div>
-            <div class="member-response-container">
+            <div class="member-response-container ${this.isMobile ? 'mobile' : 'desktop'}">
               ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
                 <allergy-prompt-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
                                      ?allergy="${a.response.allergies.length > 0}"
@@ -586,9 +504,9 @@ export class HomePage extends BasePage {
             </div>
           </div>
           <div class="buttons">
-            <styled-button text="back" style="width: 400px" enabled
+            <styled-button text="back" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
                            @user-clicked=${this._handleBack}></styled-button>
-            <styled-button text="next" style="width: 400px" enabled
+            <styled-button text="next" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
         </div>
@@ -599,56 +517,21 @@ export class HomePage extends BasePage {
     `;
   }
 
-  mobileRenderAllergyPrompt() {
+  renderAllergyDetail() {
     return html`
       <div class="content">
-        <mobile-header></mobile-header>
+        ${this.isMobile ?
+          html`<mobile-header></mobile-header>` :
+          html`<desktop-header selected="0"></desktop-header>`}
         <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
-            <div class="page-title">RSVP</div>
-            <div class="joy-message">
+            <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
+            <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
               Food Allergies
             </div>
           </div>
           <div>
-            <div class="member-response-container mobile">
-              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
-                <allergy-prompt-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
-                                     ?allergy="${a.response.allergies.length > 0}"
-                                     ?attending=${a.response.attending}
-                                     @value-changed=${this._allergyPromptChanged}></allergy-prompt-item>
-                ${index < array.length - 1 ? html`
-                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
-              `)}
-            </div>
-          </div>
-          <div class="buttons">
-            <styled-button text="back" style="width: 100%" enabled
-                           @user-clicked=${this._handleBack}></styled-button>
-            <styled-button text="next" style="width: 100%" enabled
-                           @user-clicked=${this._handleForward}></styled-button>
-          </div>
-        </div>
-        <div>
-        </div>
-        <footer-item></footer-item>
-      </div>
-    `;
-  }
-
-  desktopRenderAllergyDetail() {
-    return html`
-      <div class="content">
-        <desktop-header selected="0"></desktop-header>
-        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
-          <div class="title-text">
-            <div class="page-title desktop">RSVP</div>
-            <div class="joy-message desktop">
-              Food Allergies
-            </div>
-          </div>
-          <div>
-            <div class="member-response-container">
+            <div class="member-response-container ${this.isMobile ? 'mobile' : 'desktop'}">
               ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
                 <allergy-detail-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
                                      allergies="${a.response.allergies}"
@@ -660,46 +543,9 @@ export class HomePage extends BasePage {
             </div>
           </div>
           <div class="buttons">
-            <styled-button text="back" style="width: 400px" enabled
+            <styled-button text="back" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
                            @user-clicked=${this._handleBack}></styled-button>
-            <styled-button text="next" style="width: 400px" enabled
-                           @user-clicked=${this._handleForward}></styled-button>
-          </div>
-        </div>
-        <div>
-        </div>
-        <footer-item></footer-item>
-      </div>
-    `;
-  }
-
-  mobileRenderAllergyDetail() {
-    return html`
-      <div class="content">
-        <mobile-header></mobile-header>
-        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
-          <div class="title-text">
-            <div class="page-title">RSVP</div>
-            <div class="joy-message">
-              Food Allergies
-            </div>
-          </div>
-          <div>
-            <div class="member-response-container mobile">
-              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
-                <allergy-detail-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
-                                     allergies="${a.response.allergies}"
-                                     ?attending=${a.response.attending}
-                                     @value-changed=${this._allergyDetailChanged}></allergy-detail-item>
-                ${index < array.length - 1 ? html`
-                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
-              `)}
-            </div>
-          </div>
-          <div class="buttons">
-            <styled-button text="back" style="width: 100%" enabled
-                           @user-clicked=${this._handleBack}></styled-button>
-            <styled-button text="next" style="width: 100%" enabled
+            <styled-button text="next" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
         </div>
