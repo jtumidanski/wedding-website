@@ -29,6 +29,7 @@ export class DigitInput extends LitElement {
 
       input {
           color: white;
+          text-transform: uppercase;
       }
 
       .hash-input {

@@ -348,6 +348,14 @@ export class HomePage extends BasePage {
     this.requestUpdate();
   };
 
+  private _allPartyMembers() {
+    return this._party.data.flatMap(p => p.attributes.members)
+  }
+
+  private _allAttendingMembers() {
+    return this._party.data.flatMap(p => p.attributes.members).filter(m => m.response.attending === undefined || m.response.attending)
+  }
+
   handleKeyDown(event: any) {
     if (event.key === 'Enter' && this._fullHash) {
       this._handleHashConfirm(event);
@@ -389,7 +397,7 @@ export class HomePage extends BasePage {
               RSVP Code Not Found
             </div>
           </div>
-          <img src="/images/sad_image.png" />
+          <img src="/images/sad_image.svg" />
           <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
             Please retry or contact us as tumidanski2024@gmail.com
           </div>
@@ -418,7 +426,7 @@ export class HomePage extends BasePage {
           </div>
           <div>
             <div class="member-response-container ${this.isMobile ? 'mobile' : 'desktop'}">
-              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
+              ${Array.from(this._allPartyMembers()).map((a, index, array) => html`
                 <attendance-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
                                  ?attending=${a.response.attending} @value-changed=${this._attendanceChanged}></attendance-item>
                 ${index < array.length - 1 ? html`
@@ -455,7 +463,7 @@ export class HomePage extends BasePage {
           </div>
           <div>
             <div class="member-response-container ${this.isMobile ? 'mobile' : 'desktop'}">
-              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
+              ${Array.from(this._allAttendingMembers()).map((a, index, array) => html`
                 <entree-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
                              entree="${a.response.entree}"
                                  ?attending=${a.response.attending} @value-changed=${this._entreeChanged}></entree-item>
@@ -493,7 +501,7 @@ export class HomePage extends BasePage {
           </div>
           <div>
             <div class="member-response-container ${this.isMobile ? 'mobile' : 'desktop'}">
-              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
+              ${Array.from(this._allAttendingMembers()).map((a, index, array) => html`
                 <allergy-prompt-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
                                      ?allergy="${a.response.allergies.length > 0}"
                                      ?attending=${a.response.attending}
@@ -532,7 +540,7 @@ export class HomePage extends BasePage {
           </div>
           <div>
             <div class="member-response-container ${this.isMobile ? 'mobile' : 'desktop'}">
-              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
+              ${Array.from(this._allAttendingMembers()).map((a, index, array) => html`
                 <allergy-detail-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
                                      allergies="${a.response.allergies}"
                                      ?attending=${a.response.attending}
@@ -569,7 +577,7 @@ export class HomePage extends BasePage {
               Thank you for your rsvp!
             </div>
           </div>
-          <img src="/images/happy_image.png" />
+          <img src="/images/happy_image.svg" />
           <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
             If you need to change any of your answers, please contact us.
           </div>
