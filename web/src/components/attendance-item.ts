@@ -34,19 +34,19 @@ export class AttendanceItem extends BaseResponseItem {
 
   render() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         <div class="names">
           <div class="name">${this.first_name}</div>
           <div class="name">${this.last_name}</div>          
         </div>
-        <div class="questions">
+        <div class="questions ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="custom-radio">
             <input type="radio" id="accepts" name="drone" value="accepts" @change=${this.handleOptionChange} ?checked=${this.attending}/>
-            <label for="accepts">Joyfully Accepts</label>
+            <label class="${this.isMobile ? 'mobile' : 'desktop'}" for="accepts">Joyfully Accepts</label>
           </div>
           <div class="custom-radio">
             <input type="radio" id="declines" name="drone" value="declines" @change=${this.handleOptionChange} ?checked=${!this.attending}/>
-            <label for="declines">Regretfully Declines</label>
+            <label class="${this.isMobile ? 'mobile' : 'desktop'}" for="declines">Regretfully Declines</label>
           </div>
         </div>
       </div>

@@ -47,17 +47,17 @@ export class EntreeItem extends BaseResponseItem {
 
   render() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         <div class="names">
           <div class="name">${this.first_name}</div>
           <div class="name">${this.last_name}</div>          
         </div>
-        <div class="questions">
+        <div class="questions ${this.isMobile ? 'mobile' : 'desktop'}">
           ${this.items.map(i => html`
             <div class="custom-radio">
               <input type="radio" id="${i.name}" name="drone" value="${i.name}" @change=${this.handleOptionChange}
                      ?checked=${this.entree === i.name}/>
-              <label for="${i.name}">${i.label}</label>
+              <label class="${this.isMobile ? 'mobile' : 'desktop'}" for="${i.name}">${i.label}</label>
             </div>
           `)}
         </div>

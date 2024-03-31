@@ -34,21 +34,21 @@ export class AllergyItem extends BaseResponseItem {
 
   render() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         <div class="names">
           <div class="name">${this.first_name}</div>
           <div class="name">${this.last_name}</div>
         </div>
-        <div class="questions">
+        <div class="questions ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="custom-radio">
             <input type="radio" id="none" name="drone" value="none" @change=${this.handleOptionChange}
                    ?checked=${!this.allergy}/>
-            <label for="none">No food allergies</label>
+            <label class="${this.isMobile ? 'mobile' : 'desktop'}" for="none">No food allergies</label>
           </div>
           <div class="custom-radio">
             <input type="radio" id="some" name="drone" value="some" @change=${this.handleOptionChange}
                    ?checked=${this.allergy}/>
-            <label for="some">Yes, I have food allergies</label>
+            <label class="${this.isMobile ? 'mobile' : 'desktop'}" for="some">Yes, I have food allergies</label>
           </div>
         </div>
       </div>

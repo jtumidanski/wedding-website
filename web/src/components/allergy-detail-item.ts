@@ -92,27 +92,27 @@ export class AllergyDetailItem extends BaseResponseItem {
 
   render() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         <div class="names">
           <div class="name">${this.first_name}</div>
           <div class="name">${this.last_name}</div>
         </div>
-        <div class="allergy-questions">
+        <div class="allergy-questions ${this.isMobile ? 'mobile' : 'desktop'}">
           ${this.items.map(i => html`
             <div class="custom-checkbox">
               <input type="checkbox" id="${i}" name="drone" value="${i}" @change=${this.handleOptionChange}
                      ?checked=${this.allergies.split(',').some(a => a === i)}/>
-              <label for="${i}">${i}</label>
+              <label class="${this.isMobile ? 'mobile' : 'desktop'}" for="${i}">${i}</label>
             </div>
           `)}
           <div class="custom-checkbox">
             <input type="checkbox" id="other" name="drone" value="other" @change=${this.handleOptionChange}
                    ?checked=${this.hasNonStandardAllergy()}/>
-            <label for="other">other</label>
+            <label class="${this.isMobile ? 'mobile' : 'desktop'}" for="other">other</label>
           </div>
         </div>
         ${this.hasNonStandardAllergy() || this.showOther ? html`<textarea
-          id="other-allergies"
+          id="other-allergies" class="${this.isMobile ? 'mobile' : 'desktop'}"
           @input=${this.onNotesChange}>${this.findNonStandardAllergy()}</textarea>` : html``}
       </div>
     `;

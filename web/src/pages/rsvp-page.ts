@@ -39,7 +39,14 @@ export class HomePage extends BasePage {
           flex-direction: column;
           justify-content: space-between;
           align-items: center;
+      }
+
+      .main-content.desktop {
           gap: 50px;
+      }
+
+      .main-content.mobile {
+          gap: 20px;
       }
 
       .title-text {
@@ -51,14 +58,14 @@ export class HomePage extends BasePage {
       }
 
       .page-title {
-          color: #FFF;
-          text-align: center;
-          font-family: "Bodoni 72 Smallcaps", serif;
-          font-size: 40px;
+          font-family: 'Bodoni 72 Smallcaps', serif;
           font-style: normal;
           font-weight: 400;
-          line-height: 47px; /* 117.5% */
-          letter-spacing: 2.8px;
+          font-size: 52px;
+          line-height: 47px;
+          text-align: center;
+          letter-spacing: 0.13em;
+          color: #FFFFFF;
       }
 
       .page-title.desktop {
@@ -68,14 +75,15 @@ export class HomePage extends BasePage {
       }
 
       .joy-message {
-          color: #FFF;
-          text-align: center;
-          font-family: Avenir, sans-serif;
-          font-size: 16px;
+          font-family: 'Avenir', sans-serif;
           font-style: normal;
-          font-weight: 400;
-          line-height: normal;
-          white-space: pre-line;
+          font-weight: 900;
+          font-size: 14px;
+          line-height: 19px;
+          text-align: center;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #FFFFFF;
       }
 
       .joy-message.desktop {
@@ -118,19 +126,47 @@ export class HomePage extends BasePage {
           gap: 20px;
       }
 
+      .member-response-container.mobile {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          gap: 20px;
+      }
+
       .buttons {
           display: flex;
           justify-content: center;
           align-items: center;
           flex-direction: row;
           gap: 30px;
+          width: 100%;
       }
-
+      
       .separator {
           font-family: "Bodoni 72 Smallcaps", serif;
+      }
+
+      .separator.desktop {
           font-size: 45px;
           font-style: normal;
           font-weight: 900;
+          text-transform: uppercase;
+      }
+
+      .separator.mobile {
+          font-weight: 700;
+          font-size: 32px;
+          line-height: 24px;
+          text-transform: uppercase;
+      }
+      
+      digit-input.desktop {
+          --magic-number: 100px;
+      }
+
+      digit-input.mobile {
+          --magic-number: 70px;
       }
   `;
 
@@ -147,35 +183,24 @@ export class HomePage extends BasePage {
   _processedEntree = false;
 
   mobileRender() {
-    return html`
-      <div class="content">
-        <mobile-header></mobile-header>
-        <div class="title-text">
-          <div class="page-title">Accommodations</div>
-          <div class="joy-message">
-            We are over the moon that you will be joining us to celebrate our wedding!
-          </div>
-          <div class="accommodations-text">
-            Since our wedding date coincides with peak tourism season, we recommend you secure your lodging early as
-            availability can be limited. To assist you, we’ve compiled a list of recommended lodging.
-          </div>
-        </div>
-        <div class="accommodations mobile">
-          <bay-pointe-accommodation-link></bay-pointe-accommodation-link>
-          <airbnb-accommodation-link></airbnb-accommodation-link>
-          <text-accommodation-link name="Castle in the Country Bed & Breakfast"
-                                   url="https://www.castleinthecountry.com/"></text-accommodation-link>
-          <text-accommodation-link name="Whisper Ridge Bed & Breakfast"
-                                   url="https://www.allegandepot.com/"></text-accommodation-link>
-          <expedia-accommodation-link></expedia-accommodation-link>
-          <vrbo-accommodation-link></vrbo-accommodation-link>
-          <text-accommodation-link name="Allegan Country Inn"
-                                   url="https://www.allegancountryinn.com/"></text-accommodation-link>
-          <text-accommodation-link name="Jade Estate Inn" url="https://jadeestateinn.com/"></text-accommodation-link>
-        </div>
-        <footer-item></footer-item>
-      </div>
-    `;
+    switch (this._state) {
+      case -1:
+        return this.mobileRenderCodeBad();
+      case 0:
+        return this.mobileRenderCodeInput();
+      case 1:
+        return this.mobileRenderAttendance();
+      case 2:
+        return this.mobileRenderEntree();
+      case 3:
+        return this.mobileRenderAllergyPrompt();
+      case 4:
+        return this.mobileRenderAllergyDetail();
+      case 999:
+        return this.mobileRenderComplete();
+      default:
+        return html``;
+    }
   }
 
   desktopRender() {
@@ -372,7 +397,7 @@ export class HomePage extends BasePage {
           <div class="joy-message desktop">
             Please enter your RSVP code
           </div>
-          <digit-input id="hash-input" @value-changed=${this._hashValueListener} @keydown=${this.handleKeyDown}></digit-input>
+          <digit-input id="hash-input" class="${this.isMobile ? 'mobile' : 'desktop'}" @value-changed=${this._hashValueListener} @keydown=${this.handleKeyDown}></digit-input>
           <styled-button text="confirm" style="width: 400px" .enabled=${this._fullHash}
                          @user-clicked=${this._handleHashConfirm}></styled-button>
         </div>
@@ -383,11 +408,31 @@ export class HomePage extends BasePage {
     `;
   }
 
+  mobileRenderCodeInput() {
+    return html`
+      <div class="content">
+        <mobile-header></mobile-header>
+        <div class="title-text">
+          <div class="page-title">RSVP</div>
+          <div class="joy-message">
+            Please enter your RSVP code
+          </div>
+          <digit-input id="hash-input" class="${this.isMobile ? 'mobile' : 'desktop'}" @value-changed=${this._hashValueListener} @keydown=${this.handleKeyDown}></digit-input>
+          <styled-button text="confirm" style="width: 320px" .enabled=${this._fullHash}
+                         @user-clicked=${this._handleHashConfirm}></styled-button>
+        </div>
+        <div class="accommodations">
+        </div>
+        <footer-item></footer-item>
+      </div>
+    `;
+  }
+
   desktopRenderCodeBad() {
     return html`
       <div class="content">
         <desktop-header selected="0"></desktop-header>
-        <div class="main-content">
+        <div class="main-content ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title desktop">RSVP</div>
             <div class="joy-message desktop">
@@ -408,11 +453,36 @@ export class HomePage extends BasePage {
     `;
   }
 
+  mobileRenderCodeBad() {
+    return html`
+      <div class="content">
+        <mobile-header></mobile-header>
+        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
+          <div class="title-text">
+            <div class="page-title">RSVP</div>
+            <div class="joy-message">
+              RSVP Code Not Found
+            </div>
+          </div>
+          <img src="/images/sad_image.png" />
+          <div class="joy-message">
+            Please retry or contact us as tumidanski2024@gmail.com
+          </div>
+          <styled-button text="back" style="width: 320px" enabled
+                         @user-clicked=${this._handleBadCodeBack}></styled-button>
+        </div>
+        <div class="accommodations">
+        </div>
+        <footer-item></footer-item>
+      </div>
+    `;
+  }
+
   desktopRenderAttendance() {
     return html`
       <div class="content">
         <desktop-header selected="0"></desktop-header>
-        <div class="main-content">
+        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title desktop">RSVP</div>
             <div class="joy-message desktop">
@@ -425,7 +495,7 @@ export class HomePage extends BasePage {
                 <attendance-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
                                  ?attending=${a.response.attending} @value-changed=${this._attendanceChanged}></attendance-item>
                 ${index < array.length - 1 ? html`
-                  <div class="separator">&</div>` : html``}
+                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
               `)}
             </div>
           </div>
@@ -443,11 +513,46 @@ export class HomePage extends BasePage {
     `;
   }
 
+  mobileRenderAttendance() {
+    return html`
+      <div class="content">
+        <mobile-header></mobile-header>
+        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
+          <div class="title-text">
+            <div class="page-title">RSVP</div>
+            <div class="joy-message">
+              Attendance
+            </div>
+          </div>
+          <div>
+            <div class="member-response-container mobile">
+              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
+                <attendance-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
+                                 ?attending=${a.response.attending} @value-changed=${this._attendanceChanged}></attendance-item>
+                ${index < array.length - 1 ? html`
+                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
+              `)}
+            </div>
+          </div>
+          <div class="buttons">
+            <styled-button text="back" style="width: 100%" enabled
+                           @user-clicked=${this._handleBack}></styled-button>
+            <styled-button text="next" style="width: 100%" .enabled=${this._processedAttendance}
+                           @user-clicked=${this._handleForward}></styled-button>
+          </div>
+        </div>
+        <div>
+        </div>
+        <footer-item></footer-item>
+      </div>
+    `;
+  }
+
   desktopRenderEntree() {
     return html`
       <div class="content">
         <desktop-header selected="0"></desktop-header>
-        <div class="main-content">
+        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title desktop">RSVP</div>
             <div class="joy-message desktop">
@@ -461,7 +566,7 @@ export class HomePage extends BasePage {
                              entree="${a.response.entree}"
                                  ?attending=${a.response.attending} @value-changed=${this._entreeChanged}></entree-item>
                 ${index < array.length - 1 ? html`
-                <div class="separator">&</div>` : html``}
+                <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
               `)}
             </div>
           </div>
@@ -479,11 +584,47 @@ export class HomePage extends BasePage {
     `;
   }
 
+  mobileRenderEntree() {
+    return html`
+      <div class="content">
+        <mobile-header></mobile-header>
+        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
+          <div class="title-text">
+            <div class="page-title">RSVP</div>
+            <div class="joy-message">
+              Dinner Selection
+            </div>
+          </div>
+          <div>
+            <div class="member-response-container mobile">
+              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
+                <entree-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
+                             entree="${a.response.entree}"
+                             ?attending=${a.response.attending} @value-changed=${this._entreeChanged}></entree-item>
+                ${index < array.length - 1 ? html`
+                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
+              `)}
+            </div>
+          </div>
+          <div class="buttons">
+            <styled-button text="back" style="width: 100%" enabled
+                           @user-clicked=${this._handleBack}></styled-button>
+            <styled-button text="next" style="width: 100%" .enabled=${this._processedEntree}
+                           @user-clicked=${this._handleForward}></styled-button>
+          </div>
+        </div>
+        <div>
+        </div>
+        <footer-item></footer-item>
+      </div>
+    `;
+  }
+
   desktopRenderAllergyPrompt() {
     return html`
       <div class="content">
         <desktop-header selected="0"></desktop-header>
-        <div class="main-content">
+        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title desktop">RSVP</div>
             <div class="joy-message desktop">
@@ -498,7 +639,7 @@ export class HomePage extends BasePage {
                                      ?attending=${a.response.attending}
                                      @value-changed=${this._allergyPromptChanged}></allergy-prompt-item>
                 ${index < array.length - 1 ? html`
-                  <div class="separator">&</div>` : html``}
+                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
               `)}
             </div>
           </div>
@@ -506,6 +647,43 @@ export class HomePage extends BasePage {
             <styled-button text="back" style="width: 400px" enabled
                            @user-clicked=${this._handleBack}></styled-button>
             <styled-button text="next" style="width: 400px" enabled
+                           @user-clicked=${this._handleForward}></styled-button>
+          </div>
+        </div>
+        <div>
+        </div>
+        <footer-item></footer-item>
+      </div>
+    `;
+  }
+
+  mobileRenderAllergyPrompt() {
+    return html`
+      <div class="content">
+        <mobile-header></mobile-header>
+        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
+          <div class="title-text">
+            <div class="page-title">RSVP</div>
+            <div class="joy-message">
+              Food Allergies
+            </div>
+          </div>
+          <div>
+            <div class="member-response-container mobile">
+              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
+                <allergy-prompt-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
+                                     ?allergy="${a.response.allergies.length > 0}"
+                                     ?attending=${a.response.attending}
+                                     @value-changed=${this._allergyPromptChanged}></allergy-prompt-item>
+                ${index < array.length - 1 ? html`
+                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
+              `)}
+            </div>
+          </div>
+          <div class="buttons">
+            <styled-button text="back" style="width: 100%" enabled
+                           @user-clicked=${this._handleBack}></styled-button>
+            <styled-button text="next" style="width: 100%" enabled
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
         </div>
@@ -520,7 +698,7 @@ export class HomePage extends BasePage {
     return html`
       <div class="content">
         <desktop-header selected="0"></desktop-header>
-        <div class="main-content">
+        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title desktop">RSVP</div>
             <div class="joy-message desktop">
@@ -535,7 +713,7 @@ export class HomePage extends BasePage {
                                      ?attending=${a.response.attending}
                                      @value-changed=${this._allergyDetailChanged}></allergy-detail-item>
                 ${index < array.length - 1 ? html`
-                  <div class="separator">&</div>` : html``}
+                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
               `)}
             </div>
           </div>
@@ -553,11 +731,48 @@ export class HomePage extends BasePage {
     `;
   }
 
+  mobileRenderAllergyDetail() {
+    return html`
+      <div class="content">
+        <mobile-header></mobile-header>
+        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
+          <div class="title-text">
+            <div class="page-title">RSVP</div>
+            <div class="joy-message">
+              Food Allergies
+            </div>
+          </div>
+          <div>
+            <div class="member-response-container mobile">
+              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
+                <allergy-detail-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
+                                     allergies="${a.response.allergies}"
+                                     ?attending=${a.response.attending}
+                                     @value-changed=${this._allergyDetailChanged}></allergy-detail-item>
+                ${index < array.length - 1 ? html`
+                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
+              `)}
+            </div>
+          </div>
+          <div class="buttons">
+            <styled-button text="back" style="width: 100%" enabled
+                           @user-clicked=${this._handleBack}></styled-button>
+            <styled-button text="next" style="width: 100%" enabled
+                           @user-clicked=${this._handleForward}></styled-button>
+          </div>
+        </div>
+        <div>
+        </div>
+        <footer-item></footer-item>
+      </div>
+    `;
+  }
+
   desktopRenderComplete() {
     return html`
       <div class="content">
         <desktop-header selected="0"></desktop-header>
-        <div class="main-content">
+        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title desktop">RSVP</div>
             <div class="joy-message desktop">
@@ -571,6 +786,30 @@ export class HomePage extends BasePage {
           <navigate-styled-button text="done" url="/" style="width: 400px" enabled></navigate-styled-button>
         </div>
         <div class="accommodations desktop">
+        </div>
+        <footer-item></footer-item>
+      </div>
+    `;
+  }
+
+  mobileRenderComplete() {
+    return html`
+      <div class="content">
+        <mobile-header></mobile-header>
+        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
+          <div class="title-text">
+            <div class="page-title">RSVP</div>
+            <div class="joy-message">
+              Thank you for your rsvp!
+            </div>
+          </div>
+          <img src="/images/happy_image.png" />
+          <div class="joy-message">
+            If you need to change any of your answers, please contact us.
+          </div>
+          <navigate-styled-button text="done" url="/" style="width: 320px" enabled></navigate-styled-button>
+        </div>
+        <div class="accommodations">
         </div>
         <footer-item></footer-item>
       </div>

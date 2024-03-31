@@ -140,7 +140,7 @@ export class ReservationPage extends BasePage {
           <div class="date-text">August 30<sup>th</sup> 2024</div>
           <div class="normal-text">To celebrate their wedding</div>
         </div>
-        <navigate-styled-button class="mobile-button" text="RSVP"></navigate-styled-button>
+        <navigate-styled-button class="mobile-button" text="RSVP" url="/rsvp" enabled></navigate-styled-button>
         <div class="wedding-info">
           <div class="normal-text">Ceremony & reception to be celebrated at</div>
           <div class="normal-text bold">Bay pointe woods</div>

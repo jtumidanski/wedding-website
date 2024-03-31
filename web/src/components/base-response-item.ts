@@ -3,6 +3,20 @@ import {css, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 export class BaseResponseItem extends LitElement {
+  isMobile = false;
+
+  constructor() {
+    super();
+    this.isMobile = false; // Assume desktop by default
+    this.updateDeviceType();
+  }
+
+  updateDeviceType() {
+    // Check device width to determine if it's a mobile device
+    this.isMobile = window.innerWidth <= 768;
+    this.requestUpdate();
+  }
+
   static styles = css`
       /* Styles for the navigation menu component */
 
@@ -13,10 +27,19 @@ export class BaseResponseItem extends LitElement {
           justify-content: center;
           align-items: center;
           padding: 25px;
-          gap: 25px;
+          border: 1px dashed #FFFFFF;
+      }
+      
+      .content.desktop {
           width: 500px;
           max-width: 500px;
-          border: 1px dashed #FFFFFF;
+          gap: 25px;
+      }
+
+      .content.mobile {
+          width: 320px;
+          max-width: 320px;
+          gap: 20px;
       }
 
       .names {
@@ -39,7 +62,27 @@ export class BaseResponseItem extends LitElement {
           color: #FFFFFF;
       }
       
+      .questions {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+      }
+      
+      .questions.desktop {
+          padding: 0px;
+          gap: 15px;
+      }
+      
+      .questions.mobile {
+          padding: 0px;
+          gap: 10px;
+      }
+      
       .allergy-questions {
+      }
+
+      .allergy-questions.desktop {
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
@@ -49,18 +92,29 @@ export class BaseResponseItem extends LitElement {
           padding: 0px;
           gap: 20px;
       }
+
+      .allergy-questions.mobile {
+          padding: 0px;
+          column-gap: 20px;
+          column-count: 2;
+      }
       
       label {
           font-family: Avenir, sans-serif;
           font-style: normal;
           font-weight: 400;
-          font-size: 18px;
           line-height: 16px;
-          /* identical to box height, or 89% */
           letter-spacing: 0.1em;
           text-transform: uppercase;
-
           color: #FFFFFF;
+      }
+
+      label.desktop {
+          font-size: 18px;
+      }
+
+      label.mobile {
+          font-size: 14px;
       }
 
       /* Hide the default radio button */
@@ -83,8 +137,8 @@ export class BaseResponseItem extends LitElement {
           margin-right: 8px; /* Space between the custom radio button and the text */
           border: 2px solid #AD9961;
           border-radius: 50%; /* Make it circular */
-          width: 20px; /* Adjust size as needed */
-          height: 20px; /* Adjust size as needed */
+          width: 14px; /* Adjust size as needed */
+          height: 14px; /* Adjust size as needed */
           background-color: transparent;
       }
 
@@ -93,11 +147,11 @@ export class BaseResponseItem extends LitElement {
           content: "";
           position: absolute;
           top: 50%;
-          left: 6px; /* Adjust left value to center the inner circle */
+          left: 4px; /* Adjust left value to center the inner circle */
           transform: translate(0, -50%);
           border-radius: 50%;
-          width: 12px; /* Adjust inner circle size as needed */
-          height: 12px; /* Adjust inner circle size as needed */
+          width: 10px; /* Adjust inner circle size as needed */
+          height: 10px; /* Adjust inner circle size as needed */
           background: #AD9961;
           opacity: 0; /* Initially hidden */
       }
@@ -109,6 +163,11 @@ export class BaseResponseItem extends LitElement {
       /* Hide the default checkbox */
       .custom-checkbox input[type="checkbox"] {
           display: none;
+      }
+      
+      .custom-checkbox {
+          break-inside: avoid;
+          margin-bottom: 10px;
       }
 
       /* Custom checkbox label styling */
@@ -124,8 +183,8 @@ export class BaseResponseItem extends LitElement {
           content: '';
           display: inline-block;
           margin-right: 8px; /* Space between the custom radio button and the text */
-          width: 20px; /* Adjust size as needed */
-          height: 20px; /* Adjust size as needed */
+          width: 14px; /* Adjust size as needed */
+          height: 14px; /* Adjust size as needed */
           border: 2px solid #AD9961;
           border-radius: 4px; /* Adjust for rounded corners */
           background-color: transparent;
@@ -135,7 +194,7 @@ export class BaseResponseItem extends LitElement {
       .custom-checkbox input[type="checkbox"]:checked + label::after {
           content: '✔'; /* Checkmark */
           position: absolute;
-          left: 6px;
+          left: 3px;
           color: white;
           font-size: 18px; /* Adjust size as needed */
       }
@@ -155,11 +214,6 @@ export class BaseResponseItem extends LitElement {
           padding: 10px 15px;
           gap: 10px;
 
-          width: 400px;
-          max-width: 400px;
-          height: 150px;
-          max-height: 150px;
-
           background: rgba(0, 0, 0, 0.1);
           border: 1px solid #FFFFFF;
           resize: none;
@@ -171,6 +225,21 @@ export class BaseResponseItem extends LitElement {
           letter-spacing: 0.1em;
           text-transform: uppercase;
           color: #FFFFFF;
+      }
+      
+      textarea.desktop {
+
+          width: 400px;
+          max-width: 400px;
+          height: 150px;
+          max-height: 150px;
+      }
+
+      textarea.mobile {
+          width: 270px;
+          max-width: 270px;
+          height: 150px;
+          max-height: 150px;
       }
   `;
 
