@@ -15,10 +15,15 @@ func getByMemberId(memberId uuid.UUID) database.EntityProvider[Entity] {
 }
 
 func MakeResponse(e Entity) (Model, error) {
+	allergies := make([]string, 0)
+	if e.Allergies != "" {
+		allergies = strings.Split(e.Allergies, ",")
+	}
+	
 	return Model{
 		ID:        e.ID.String(),
 		Attending: e.Attending,
 		Entree:    e.Entree,
-		Allergies: strings.Split(e.Allergies, ","),
+		Allergies: allergies,
 	}, nil
 }
