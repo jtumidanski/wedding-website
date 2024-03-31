@@ -168,6 +168,22 @@ export class HomePage extends BasePage {
       digit-input.mobile {
           --magic-number: 70px;
       }
+      
+      .single-button.desktop {
+          width: 400px;
+      }
+      
+      .single-button.mobile {
+          width: 320px;
+      }
+      
+      .double-button.desktop {
+          width: 400px;
+      }
+      
+      .double-button.mobile {
+          width: 100%
+      }
   `;
 
   render() {
@@ -185,11 +201,11 @@ export class HomePage extends BasePage {
   mobileRender() {
     switch (this._state) {
       case -1:
-        return this.mobileRenderCodeBad();
+        return this.renderCodeBad();
       case 0:
-        return this.mobileRenderCodeInput();
+        return this.renderCodeInput();
       case 1:
-        return this.mobileRenderAttendance();
+        return this.renderAttendance();
       case 2:
         return this.mobileRenderEntree();
       case 3:
@@ -197,7 +213,7 @@ export class HomePage extends BasePage {
       case 4:
         return this.mobileRenderAllergyDetail();
       case 999:
-        return this.mobileRenderComplete();
+        return this.renderComplete();
       default:
         return html``;
     }
@@ -206,11 +222,11 @@ export class HomePage extends BasePage {
   desktopRender() {
     switch (this._state) {
       case -1:
-        return this.desktopRenderCodeBad();
+        return this.renderCodeBad();
       case 0:
-        return this.desktopRenderCodeInput();
+        return this.renderCodeInput();
       case 1:
-        return this.desktopRenderAttendance();
+        return this.renderAttendance();
       case 2:
         return this.desktopRenderEntree();
       case 3:
@@ -218,7 +234,7 @@ export class HomePage extends BasePage {
       case 4:
         return this.desktopRenderAllergyDetail();
       case 999:
-        return this.desktopRenderComplete();
+        return this.renderComplete();
       default:
         return html``;
     }
@@ -388,123 +404,20 @@ export class HomePage extends BasePage {
     }
   }
 
-  desktopRenderCodeInput() {
+  renderCodeInput() {
     return html`
       <div class="content">
-        <desktop-header selected="0"></desktop-header>
+        ${this.isMobile ?
+          html`<mobile-header></mobile-header>` :
+          html`<desktop-header selected="0"></desktop-header>`}
         <div class="title-text">
-          <div class="page-title desktop">RSVP</div>
-          <div class="joy-message desktop">
+          <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
+          <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
             Please enter your RSVP code
           </div>
           <digit-input id="hash-input" class="${this.isMobile ? 'mobile' : 'desktop'}" @value-changed=${this._hashValueListener} @keydown=${this.handleKeyDown}></digit-input>
-          <styled-button text="confirm" style="width: 400px" .enabled=${this._fullHash}
+          <styled-button text="confirm" class="single-button ${this.isMobile ? 'mobile' : 'desktop'}" .enabled=${this._fullHash}
                          @user-clicked=${this._handleHashConfirm}></styled-button>
-        </div>
-        <div class="accommodations desktop">
-        </div>
-        <footer-item></footer-item>
-      </div>
-    `;
-  }
-
-  mobileRenderCodeInput() {
-    return html`
-      <div class="content">
-        <mobile-header></mobile-header>
-        <div class="title-text">
-          <div class="page-title">RSVP</div>
-          <div class="joy-message">
-            Please enter your RSVP code
-          </div>
-          <digit-input id="hash-input" class="${this.isMobile ? 'mobile' : 'desktop'}" @value-changed=${this._hashValueListener} @keydown=${this.handleKeyDown}></digit-input>
-          <styled-button text="confirm" style="width: 320px" .enabled=${this._fullHash}
-                         @user-clicked=${this._handleHashConfirm}></styled-button>
-        </div>
-        <div class="accommodations">
-        </div>
-        <footer-item></footer-item>
-      </div>
-    `;
-  }
-
-  desktopRenderCodeBad() {
-    return html`
-      <div class="content">
-        <desktop-header selected="0"></desktop-header>
-        <div class="main-content ${this.isMobile ? 'mobile' : 'desktop'}">
-          <div class="title-text">
-            <div class="page-title desktop">RSVP</div>
-            <div class="joy-message desktop">
-              RSVP Code Not Found
-            </div>
-          </div>
-          <img src="/images/sad_image.png" />
-          <div class="joy-message desktop">
-            Please retry or contact us as tumidanski2024@gmail.com
-          </div>
-          <styled-button text="back" style="width: 400px" enabled
-                         @user-clicked=${this._handleBadCodeBack}></styled-button>
-        </div>
-        <div class="accommodations desktop">
-        </div>
-        <footer-item></footer-item>
-      </div>
-    `;
-  }
-
-  mobileRenderCodeBad() {
-    return html`
-      <div class="content">
-        <mobile-header></mobile-header>
-        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
-          <div class="title-text">
-            <div class="page-title">RSVP</div>
-            <div class="joy-message">
-              RSVP Code Not Found
-            </div>
-          </div>
-          <img src="/images/sad_image.png" />
-          <div class="joy-message">
-            Please retry or contact us as tumidanski2024@gmail.com
-          </div>
-          <styled-button text="back" style="width: 320px" enabled
-                         @user-clicked=${this._handleBadCodeBack}></styled-button>
-        </div>
-        <div class="accommodations">
-        </div>
-        <footer-item></footer-item>
-      </div>
-    `;
-  }
-
-  desktopRenderAttendance() {
-    return html`
-      <div class="content">
-        <desktop-header selected="0"></desktop-header>
-        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
-          <div class="title-text">
-            <div class="page-title desktop">RSVP</div>
-            <div class="joy-message desktop">
-              Attendance
-            </div>
-          </div>
-          <div>
-            <div class="member-response-container">
-              ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
-                <attendance-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
-                                 ?attending=${a.response.attending} @value-changed=${this._attendanceChanged}></attendance-item>
-                ${index < array.length - 1 ? html`
-                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
-              `)}
-            </div>
-          </div>
-          <div class="buttons">
-            <styled-button text="back" style="width: 400px" enabled
-                           @user-clicked=${this._handleBack}></styled-button>
-            <styled-button text="next" style="width: 400px" .enabled=${this._processedAttendance}
-                           @user-clicked=${this._handleForward}></styled-button>
-          </div>
         </div>
         <div>
         </div>
@@ -513,19 +426,48 @@ export class HomePage extends BasePage {
     `;
   }
 
-  mobileRenderAttendance() {
+  renderCodeBad() {
     return html`
       <div class="content">
-        <mobile-header></mobile-header>
+        ${this.isMobile ?
+          html`<mobile-header></mobile-header>` :
+          html`<desktop-header selected="0"></desktop-header>`}
+        <div class="main-content ${this.isMobile ? 'mobile' : 'desktop'}">
+          <div class="title-text">
+            <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
+            <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
+              RSVP Code Not Found
+            </div>
+          </div>
+          <img src="/images/sad_image.png" />
+          <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
+            Please retry or contact us as tumidanski2024@gmail.com
+          </div>
+          <styled-button text="back" class="single-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
+                         @user-clicked=${this._handleBadCodeBack}></styled-button>
+        </div>
+        <div>
+        </div>
+        <footer-item></footer-item>
+      </div>
+    `;
+  }
+
+  renderAttendance() {
+    return html`
+      <div class="content">
+        ${this.isMobile ?
+          html`<mobile-header></mobile-header>` :
+          html`<desktop-header selected="0"></desktop-header>`}
         <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
-            <div class="page-title">RSVP</div>
-            <div class="joy-message">
+            <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
+            <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
               Attendance
             </div>
           </div>
           <div>
-            <div class="member-response-container mobile">
+            <div class="member-response-container ${this.isMobile ? 'mobile' : 'desktop'}">
               ${Array.from(this._party.data.flatMap(p => p.attributes.members).entries()).map(([q, a], index, array) => html`
                 <attendance-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
                                  ?attending=${a.response.attending} @value-changed=${this._attendanceChanged}></attendance-item>
@@ -535,9 +477,9 @@ export class HomePage extends BasePage {
             </div>
           </div>
           <div class="buttons">
-            <styled-button text="back" style="width: 100%" enabled
+            <styled-button text="back" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
                            @user-clicked=${this._handleBack}></styled-button>
-            <styled-button text="next" style="width: 100%" .enabled=${this._processedAttendance}
+            <styled-button text="next" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" .enabled=${this._processedAttendance}
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
         </div>
@@ -768,48 +710,26 @@ export class HomePage extends BasePage {
     `;
   }
 
-  desktopRenderComplete() {
+  renderComplete() {
     return html`
       <div class="content">
-        <desktop-header selected="0"></desktop-header>
-        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
+        ${this.isMobile ? 
+          html`<mobile-header></mobile-header>` : 
+          html`<desktop-header selected="0"></desktop-header>`}
+        <div class="main-content ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
-            <div class="page-title desktop">RSVP</div>
-            <div class="joy-message desktop">
+            <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
+            <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
               Thank you for your rsvp!
             </div>
           </div>
           <img src="/images/happy_image.png" />
-          <div class="joy-message desktop">
+          <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
             If you need to change any of your answers, please contact us.
           </div>
-          <navigate-styled-button text="done" url="/" style="width: 400px" enabled></navigate-styled-button>
+          <navigate-styled-button class="single-button ${this.isMobile ? 'mobile' : 'desktop'}" text="done" url="/" enabled></navigate-styled-button>
         </div>
-        <div class="accommodations desktop">
-        </div>
-        <footer-item></footer-item>
-      </div>
-    `;
-  }
-
-  mobileRenderComplete() {
-    return html`
-      <div class="content">
-        <mobile-header></mobile-header>
-        <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
-          <div class="title-text">
-            <div class="page-title">RSVP</div>
-            <div class="joy-message">
-              Thank you for your rsvp!
-            </div>
-          </div>
-          <img src="/images/happy_image.png" />
-          <div class="joy-message">
-            If you need to change any of your answers, please contact us.
-          </div>
-          <navigate-styled-button text="done" url="/" style="width: 320px" enabled></navigate-styled-button>
-        </div>
-        <div class="accommodations">
+        <div>
         </div>
         <footer-item></footer-item>
       </div>
