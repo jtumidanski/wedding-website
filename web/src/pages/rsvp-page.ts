@@ -1,5 +1,5 @@
 // src/home-page.ts
-import {css, html} from 'lit';
+import {css, html, PropertyValues} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import '../components/mobile-header';
 import '../components/desktop-header';
@@ -11,9 +11,9 @@ import '../components/attendance-item';
 import '../components/entree-item';
 import '../components/allergy-prompt-item';
 import '../components/allergy-detail-item';
-import '../components/navigate-styled-button'
+import '../components/navigate-styled-button';
 import {BasePage} from './base-page';
-import {GetParty, PartyResponse, updateAllMemberResponse, updateMemberResponse} from '../services/party-service';
+import {GetParty, PartyResponse, updateAllMemberResponse} from '../services/party-service';
 
 
 @customElement('rsvp-page')
@@ -117,7 +117,7 @@ export class HomePage extends BasePage {
           gap: 30px;
           width: 100%;
       }
-      
+
       .separator {
           font-family: "Bodoni 72 Smallcaps", serif;
       }
@@ -135,7 +135,7 @@ export class HomePage extends BasePage {
           line-height: 24px;
           text-transform: uppercase;
       }
-      
+
       digit-input.desktop {
           --magic-number: 100px;
       }
@@ -143,23 +143,39 @@ export class HomePage extends BasePage {
       digit-input.mobile {
           --magic-number: 60px;
       }
-      
+
       .single-button.desktop {
           width: 400px;
       }
-      
+
       .single-button.mobile {
           width: 320px;
       }
-      
+
       .double-button.desktop {
           width: 400px;
       }
-      
+
       .double-button.mobile {
           width: 100%
       }
   `;
+
+  static get properties() {
+    return {
+      code: {type: String},
+    };
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    const params = new URLSearchParams(window.location.search);
+    var param = params.get('code');
+    if (param !== null) {
+      this._hashValue = param;
+      this._fullHash = this._hashValue.length == 4;
+      this._handleHashConfirm(undefined);
+    }
+  }
 
   render() {
     switch (this._state) {
@@ -185,7 +201,7 @@ export class HomePage extends BasePage {
   _state = 0;
   _hashValue = '';
   _fullHash = false;
-  _party:PartyResponse = {"data": []};
+  _party: PartyResponse = {'data': []};
   _allergyPrompt: string[] = [];
   _processedAttendance = false;
   _processedEntree = false;
@@ -216,20 +232,20 @@ export class HomePage extends BasePage {
                 ...member,
                 response: {
                   ...member.response,
-                  attending: value
-                }
+                  attending: value,
+                },
               };
             } else {
               return member;
             }
-          })
-        }
-      }))
+          }),
+        },
+      })),
     };
   }
 
   private _hasSomeoneAttending() {
-    return this._party.data.flatMap(p => p.attributes.members).some(m => m.response.attending)
+    return this._party.data.flatMap(p => p.attributes.members).some(m => m.response.attending);
   }
 
   private _updateEntreeOfMember(memberId: string, value: string) {
@@ -245,15 +261,15 @@ export class HomePage extends BasePage {
                 ...member,
                 response: {
                   ...member.response,
-                  entree: value
-                }
+                  entree: value,
+                },
               };
             } else {
               return member;
             }
-          })
-        }
-      }))
+          }),
+        },
+      })),
     };
   }
 
@@ -290,19 +306,20 @@ export class HomePage extends BasePage {
                 ...member,
                 response: {
                   ...member.response,
-                  allergies: value
-                }
+                  allergies: value,
+                },
               };
             } else {
               return member;
             }
-          })
-        }
-      }))
+          }),
+        },
+      })),
     };
   }
+
   private _attendeesHaveEntree() {
-    return !this._party.data.flatMap(p => p.attributes.members).filter(m => m.response.attending).some(m => m.response.entree === '')
+    return !this._party.data.flatMap(p => p.attributes.members).filter(m => m.response.attending).some(m => m.response.entree === '');
   }
 
   private _handleHashConfirm(event: any) {
@@ -315,7 +332,7 @@ export class HomePage extends BasePage {
   }
 
   private _handleBack(event: any) {
-    this._state -=1;
+    this._state -= 1;
     this.requestUpdate();
   }
 
@@ -325,7 +342,7 @@ export class HomePage extends BasePage {
       updateAllMemberResponse(members).then(this._moveToConfirmState);
       return;
     } else {
-      this._state +=1;
+      this._state += 1;
     }
     this.requestUpdate();
   }
@@ -333,7 +350,7 @@ export class HomePage extends BasePage {
   private _moveToConfirmState = () => {
     this._state = 999;
     this.requestUpdate();
-  }
+  };
 
   private _checkPartyResult = (party: PartyResponse) => {
     if (party.data && party.data.length > 0) {
@@ -349,11 +366,11 @@ export class HomePage extends BasePage {
   };
 
   private _allPartyMembers() {
-    return this._party.data.flatMap(p => p.attributes.members)
+    return this._party.data.flatMap(p => p.attributes.members);
   }
 
   private _allAttendingMembers() {
-    return this._party.data.flatMap(p => p.attributes.members).filter(m => m.response.attending === undefined || m.response.attending)
+    return this._party.data.flatMap(p => p.attributes.members).filter(m => m.response.attending === undefined || m.response.attending);
   }
 
   handleKeyDown(event: any) {
@@ -366,15 +383,19 @@ export class HomePage extends BasePage {
     return html`
       <div class="content">
         ${this.isMobile ?
-          html`<mobile-header></mobile-header>` :
-          html`<desktop-header selected="0"></desktop-header>`}
+          html`
+            <mobile-header></mobile-header>` :
+          html`
+            <desktop-header selected="0"></desktop-header>`}
         <div class="title-text">
           <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
           <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
             Please enter your RSVP code
           </div>
-          <digit-input id="hash-input" class="${this.isMobile ? 'mobile' : 'desktop'}" @value-changed=${this._hashValueListener} @keydown=${this.handleKeyDown}></digit-input>
-          <styled-button text="confirm" class="single-button ${this.isMobile ? 'mobile' : 'desktop'}" .enabled=${this._fullHash}
+          <digit-input id="hash-input" class="${this.isMobile ? 'mobile' : 'desktop'}"
+                       @value-changed=${this._hashValueListener} @keydown=${this.handleKeyDown}></digit-input>
+          <styled-button text="confirm" class="single-button ${this.isMobile ? 'mobile' : 'desktop'}"
+                         .enabled=${this._fullHash}
                          @user-clicked=${this._handleHashConfirm}></styled-button>
         </div>
         <div>
@@ -388,8 +409,10 @@ export class HomePage extends BasePage {
     return html`
       <div class="content">
         ${this.isMobile ?
-          html`<mobile-header></mobile-header>` :
-          html`<desktop-header selected="0"></desktop-header>`}
+          html`
+            <mobile-header></mobile-header>` :
+          html`
+            <desktop-header selected="0"></desktop-header>`}
         <div class="main-content ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
@@ -415,8 +438,10 @@ export class HomePage extends BasePage {
     return html`
       <div class="content">
         ${this.isMobile ?
-          html`<mobile-header></mobile-header>` :
-          html`<desktop-header selected="0"></desktop-header>`}
+          html`
+            <mobile-header></mobile-header>` :
+          html`
+            <desktop-header selected="0"></desktop-header>`}
         <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
@@ -428,7 +453,8 @@ export class HomePage extends BasePage {
             <div class="member-response-container ${this.isMobile ? 'mobile' : 'desktop'}">
               ${Array.from(this._allPartyMembers()).map((a, index, array) => html`
                 <attendance-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
-                                 ?attending=${a.response.attending} @value-changed=${this._attendanceChanged}></attendance-item>
+                                 ?attending=${a.response.attending}
+                                 @value-changed=${this._attendanceChanged}></attendance-item>
                 ${index < array.length - 1 ? html`
                   <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
               `)}
@@ -437,7 +463,8 @@ export class HomePage extends BasePage {
           <div class="buttons">
             <styled-button text="back" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
                            @user-clicked=${this._handleBack}></styled-button>
-            <styled-button text="next" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" .enabled=${this._processedAttendance}
+            <styled-button text="next" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}"
+                           .enabled=${this._processedAttendance}
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
         </div>
@@ -452,8 +479,10 @@ export class HomePage extends BasePage {
     return html`
       <div class="content">
         ${this.isMobile ?
-          html`<mobile-header></mobile-header>` :
-          html`<desktop-header selected="0"></desktop-header>`}
+          html`
+            <mobile-header></mobile-header>` :
+          html`
+            <desktop-header selected="0"></desktop-header>`}
         <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
@@ -466,16 +495,17 @@ export class HomePage extends BasePage {
               ${Array.from(this._allAttendingMembers()).map((a, index, array) => html`
                 <entree-item member_id="${a.id}" first_name="${a['first-name']}" last_name="${a['last-name']}"
                              entree="${a.response.entree}"
-                                 ?attending=${a.response.attending} @value-changed=${this._entreeChanged}></entree-item>
+                             ?attending=${a.response.attending} @value-changed=${this._entreeChanged}></entree-item>
                 ${index < array.length - 1 ? html`
-                <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
+                  <div class="separator ${this.isMobile ? 'mobile' : 'desktop'}">&</div>` : html``}
               `)}
             </div>
           </div>
           <div class="buttons">
             <styled-button text="back" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
                            @user-clicked=${this._handleBack}></styled-button>
-            <styled-button text="next" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" .enabled=${this._processedEntree}
+            <styled-button text="next" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}"
+                           .enabled=${this._processedEntree}
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
         </div>
@@ -490,8 +520,10 @@ export class HomePage extends BasePage {
     return html`
       <div class="content">
         ${this.isMobile ?
-          html`<mobile-header></mobile-header>` :
-          html`<desktop-header selected="0"></desktop-header>`}
+          html`
+            <mobile-header></mobile-header>` :
+          html`
+            <desktop-header selected="0"></desktop-header>`}
         <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
@@ -529,8 +561,10 @@ export class HomePage extends BasePage {
     return html`
       <div class="content">
         ${this.isMobile ?
-          html`<mobile-header></mobile-header>` :
-          html`<desktop-header selected="0"></desktop-header>`}
+          html`
+            <mobile-header></mobile-header>` :
+          html`
+            <desktop-header selected="0"></desktop-header>`}
         <div class="main-content  ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
@@ -567,9 +601,11 @@ export class HomePage extends BasePage {
   renderComplete() {
     return html`
       <div class="content">
-        ${this.isMobile ? 
-          html`<mobile-header></mobile-header>` : 
-          html`<desktop-header selected="0"></desktop-header>`}
+        ${this.isMobile ?
+          html`
+            <mobile-header></mobile-header>` :
+          html`
+            <desktop-header selected="0"></desktop-header>`}
         <div class="main-content ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="title-text">
             <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
@@ -581,7 +617,8 @@ export class HomePage extends BasePage {
           <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
             If you need to change any of your answers, please contact us.
           </div>
-          <navigate-styled-button class="single-button ${this.isMobile ? 'mobile' : 'desktop'}" text="done" url="/" enabled></navigate-styled-button>
+          <navigate-styled-button class="single-button ${this.isMobile ? 'mobile' : 'desktop'}" text="done" url="/"
+                                  enabled></navigate-styled-button>
         </div>
         <div>
         </div>
