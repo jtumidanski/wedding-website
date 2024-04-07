@@ -146,10 +146,10 @@ export class ReservationPage extends BasePage {
           <div class="normal-text bold">Bay pointe woods</div>
           <div class="normal-text">5100 oarie dr, shelbyville, mi 49344</div>
           <div class="hour-frame">
-            <itinerary-item key="Ceremony" value="00:00 pm"></itinerary-item>
-            <itinerary-item key="Cocktail Hour" value="00:00 pm"></itinerary-item>
-            <itinerary-item key="Dinner" value="00:00 pm"></itinerary-item>
-            <itinerary-item key="Reception" value="00:00 pm"></itinerary-item>
+            <itinerary-item key="Ceremony" value="05:30 pm"></itinerary-item>
+            <itinerary-item key="Cocktail Hour" value="06:00 pm"></itinerary-item>
+            <itinerary-item key="Dinner" value="07:30 pm"></itinerary-item>
+            <itinerary-item key="Reception" value="08:30 pm"></itinerary-item>
           </div>
           <footer-item></footer-item>
         </div>
@@ -174,10 +174,10 @@ export class ReservationPage extends BasePage {
               <div class="normal-text desktop">5100 oarie dr, shelbyville, mi 49344</div>
             </div>
             <div class="hour-frame desktop">
-              <itinerary-item key="Ceremony" value="00:00 pm" desktop></itinerary-item>
-              <itinerary-item key="Cocktail Hour" value="00:00 pm" desktop></itinerary-item>
-              <itinerary-item key="Dinner" value="00:00 pm" desktop></itinerary-item>
-              <itinerary-item key="Reception" value="00:00 pm" desktop></itinerary-item>
+              <itinerary-item key="Ceremony" value="05:30 pm" desktop></itinerary-item>
+              <itinerary-item key="Cocktail Hour" value="06:00 pm" desktop></itinerary-item>
+              <itinerary-item key="Dinner" value="07:30 pm" desktop></itinerary-item>
+              <itinerary-item key="Reception" value="08:30 pm" desktop></itinerary-item>
             </div>
           </div>
         </div>
