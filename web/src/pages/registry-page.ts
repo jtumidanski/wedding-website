@@ -4,6 +4,7 @@ import {customElement, property} from 'lit/decorators.js';
 import {BasePage} from './base-page';
 import '../components/footer-item'
 import '../components/honey-fund-registry-link'
+import '../components/amazon-registry-link'
 
 @customElement('registry-page')
 export class RegistryPage extends BasePage {
@@ -74,6 +75,14 @@ export class RegistryPage extends BasePage {
       honey-fund-registry-link.desktop {
           width: 400px;
       }
+
+      amazon-registry-link {
+          width: 100%;
+      }
+
+      amazon-registry-link.desktop {
+          width: 400px;
+      }
   `;
 
   render() {
@@ -90,6 +99,7 @@ export class RegistryPage extends BasePage {
             Nevertheless, should you wish to offer a token of your congratulations, we would be grateful for your contribution to our honeymoon fund. Your kindness will assist us in creating memories that will last a lifetime.
           </div>
           <honey-fund-registry-link class="${this.isMobile ? 'mobile' : 'desktop'}"></honey-fund-registry-link>
+          <amazon-registry-link class="${this.isMobile ? 'mobile' : 'desktop'}"></amazon-registry-link>
         </div>
         <footer-item></footer-item>
       </div>

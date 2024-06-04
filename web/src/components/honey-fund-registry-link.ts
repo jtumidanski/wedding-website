@@ -7,7 +7,7 @@ import {BaseRegistryLink} from './base-registry-link';
 export class HoneyFundRegistryLink extends BaseRegistryLink {
 
   handleClick() {
-    document.location.href = "https://www.honeyfund.com/site/mcclung-tumidanski-08-30-2024";
+    document.location.href = "https://www.honeyfund.com/site/tumidanski";
   }
 
   renderLogo(): TemplateResult<1> {

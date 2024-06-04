@@ -58,7 +58,7 @@ export class FaqPage extends BasePage {
   items = new Map<string, string>([
     ["What date should I RSVP by?", "We must receive your reply by August 1st, 2024 to ensure we can reserve you a place."],
     ["Is there parking available near the wedding venue?", "Yes, there is plenty of parking available at the venue!"],
-    ["Is there a dress code?", "The dress code for our wedding is black tie/formal attire. That generally means evening dresses, cocktail dresses, casual suits, slacks, button-downs, and sports coats (ties or no ties) are all perfect."],
+    ["Is there a dress code?", "The dress code for our wedding is formal attire. That generally means evening dresses, cocktail dresses, casual suits, slacks, button-downs, and sports coats (ties or no ties) are all perfect."],
     ["May I bring my children?", "Unfortunately, we cannot host children at our wedding. We appreciate you making arrangements ahead of time and leaving the kids at home so you can celebrate with us."],
     ["Am I allowed to bring a plus one?", "Our celebration is strictly RSVP only. We will only be able to accommodate those listed on your wedding invitation."],
     ["What type of food will be served?", "We'll be serving hors d'oeuvres at cocktail hour followed by a sit-down dinner."],
