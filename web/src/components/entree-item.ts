@@ -29,8 +29,8 @@ export class EntreeItem extends BaseResponseItem {
       this.entree = 'chicken';
     } else if (target.id === 'steak') {
       this.entree = 'steak';
-    } else if (target.id === 'cauliflower') {
-      this.entree = 'cauliflower';
+    } else if (target.id === 'potatoes') {
+      this.entree = 'potatoes';
     }
   }
 
@@ -41,8 +41,8 @@ export class EntreeItem extends BaseResponseItem {
     name: 'steak',
     label: 'NY Strip Steak'
   },{
-    name: 'cauliflower',
-    label: 'Cauliflower Steak'
+    name: 'potatoes',
+    label: 'Stuffed Sweet Potatoes'
   }];
 
   render() {

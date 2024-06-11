@@ -7,6 +7,7 @@ import '../components/styled-button';
 import '../components/itinerary-item';
 import '../components/footer-item';
 import '../components/digit-input';
+import '../components/name-input';
 import '../components/attendance-item';
 import '../components/entree-item';
 import '../components/allergy-prompt-item';
@@ -144,6 +145,14 @@ export class HomePage extends BasePage {
           --magic-number: 60px;
       }
 
+      name-input.desktop {
+          --magic-number: 100px;
+      }
+
+      name-input.mobile {
+          --magic-number: 60px;
+      }
+
       .single-button.desktop {
           width: 400px;
       }
@@ -165,16 +174,6 @@ export class HomePage extends BasePage {
     return {
       code: {type: String},
     };
-  }
-
-  protected firstUpdated(_changedProperties: PropertyValues) {
-    const params = new URLSearchParams(window.location.search);
-    var param = params.get('code');
-    if (param !== null) {
-      this._hashValue = param;
-      this._fullHash = this._hashValue.length == 4;
-      this._handleHashConfirm(undefined);
-    }
   }
 
   render() {
@@ -199,16 +198,14 @@ export class HomePage extends BasePage {
   }
 
   _state = 0;
-  _hashValue = '';
-  _fullHash = false;
+  _nameValue = '';
   _party: PartyResponse = {'data': []};
   _allergyPrompt: string[] = [];
   _processedAttendance = false;
   _processedEntree = false;
 
-  private _hashValueListener(e: CustomEvent) {
-    this._hashValue = e.detail.value;
-    this._fullHash = e.detail.value.length >= 4;
+  private _nameValueListener(e: CustomEvent) {
+    this._nameValue = e.detail.value;
     this.requestUpdate();
   }
 
@@ -322,8 +319,8 @@ export class HomePage extends BasePage {
     return !this._party.data.flatMap(p => p.attributes.members).filter(m => m.response.attending).some(m => m.response.entree === '');
   }
 
-  private _handleHashConfirm(event: any) {
-    GetParty(this._hashValue).then(this._checkPartyResult);
+  private _handleSearchConfirm(event: any) {
+    GetParty(this._nameValue).then(this._checkPartyResult);
   }
 
   private _handleBadCodeBack(event: any) {
@@ -374,8 +371,8 @@ export class HomePage extends BasePage {
   }
 
   handleKeyDown(event: any) {
-    if (event.key === 'Enter' && this._fullHash) {
-      this._handleHashConfirm(event);
+    if (event.key === 'Enter') {
+      this._handleSearchConfirm(event);
     }
   }
 
@@ -390,13 +387,13 @@ export class HomePage extends BasePage {
         <div class="title-text">
           <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
           <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
-            Please enter your RSVP code
+            Please enter your first and last name
           </div>
-          <digit-input id="hash-input" class="${this.isMobile ? 'mobile' : 'desktop'}"
-                       @value-changed=${this._hashValueListener} @keydown=${this.handleKeyDown}></digit-input>
+          <name-input id="name-input" class="${this.isMobile ? 'mobile' : 'desktop'}"
+                       @value-changed=${this._nameValueListener} @keydown=${this.handleKeyDown}></name-input>
           <styled-button text="confirm" class="single-button ${this.isMobile ? 'mobile' : 'desktop'}"
-                         .enabled=${this._fullHash}
-                         @user-clicked=${this._handleHashConfirm}></styled-button>
+                         .enabled=${true}
+                         @user-clicked=${this._handleSearchConfirm}></styled-button>
         </div>
         <div>
         </div>

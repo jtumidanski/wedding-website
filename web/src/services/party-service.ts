@@ -30,8 +30,8 @@ export interface Response {
   allergies: string[];
 }
 
-export async function GetParty(hash: string): Promise<PartyResponse> {
-  const url = baseUri + `parties?hash=${hash}`;
+export async function GetParty(search: string): Promise<PartyResponse> {
+  const url = baseUri + `parties?search=${search}`;
 
   try {
     const response = await fetch(url);
