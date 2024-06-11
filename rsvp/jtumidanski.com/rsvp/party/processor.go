@@ -1,6 +1,8 @@
 package party
 
 import (
+	"github.com/agnivade/levenshtein"
+	"github.com/antzucaro/matchr"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"jtumidanski.com/rsvp/database"
@@ -66,5 +68,87 @@ func GetAllByHash(_ logrus.FieldLogger, db *gorm.DB) func(hash string) ([]Model,
 	return func(hash string) ([]Model, error) {
 		allProvider := database.ModelSliceProvider[Model, Entity](db)(getAll(), modelFromEntity)
 		return model.FilteredProvider(allProvider, MatchHashFilter(hash))()
+	}
+}
+
+func GetAllBySearch(l logrus.FieldLogger, db *gorm.DB) func(search string) ([]Model, error) {
+	return func(search string) ([]Model, error) {
+		allProvider := database.ModelSliceProvider[Model, Entity](db)(getAll(), modelFromEntity)
+
+		ps, err := allProvider()
+		if err != nil {
+			return nil, err
+		}
+
+		//var results = computeLevenshteinDistance(l)(search, ps)
+		var results = computeJaroWinklerDistance(l)(search, ps)
+
+		var lowest = ""
+		for k, v := range results {
+			if val, ok := results[lowest]; ok {
+				if v > val {
+					lowest = k
+				}
+			} else {
+				lowest = k
+			}
+		}
+
+		var ret = make([]Model, 0)
+		for _, p := range ps {
+			if lowest == p.ID {
+				l.Debugf("Closest match is [%s].", p.Name)
+				ret = append(ret, p)
+			}
+		}
+		return ret, nil
+	}
+}
+
+func computeLevenshteinDistance(l logrus.FieldLogger) func(search string, ps []Model) map[string]int {
+	return func(search string, ps []Model) map[string]int {
+		var results = make(map[string]int)
+		for _, p := range ps {
+			for _, m := range p.Members {
+				fullName := m.FirstName + " " + m.LastName
+				levenshteinDistance := levenshtein.ComputeDistance(fullName, search)
+				l.Debugf("Computing levenshtein for [%s %s] off search [%s]. Distance=[%d]", m.FirstName, m.LastName, search, levenshteinDistance)
+
+				if val, ok := results[p.ID]; ok {
+					if val > levenshteinDistance {
+						results[p.ID] = levenshteinDistance
+					}
+				} else {
+					results[p.ID] = levenshteinDistance
+				}
+			}
+		}
+		return results
+	}
+}
+
+func computeJaroWinklerDistance(l logrus.FieldLogger) func(search string, ps []Model) map[string]float64 {
+	return func(search string, ps []Model) map[string]float64 {
+		var results = make(map[string]float64)
+		for _, p := range ps {
+			for _, m := range p.Members {
+				fullName := m.FirstName + " " + m.LastName
+				distance := matchr.JaroWinkler(fullName, search, false)
+				l.Debugf("Computing Jaro Winkler for [%s %s] off search [%s]. Distance=[%f]", m.FirstName, m.LastName, search, distance)
+
+				if distance > 1 {
+					continue
+				}
+
+				if val, ok := results[p.ID]; ok {
+					if val < distance {
+						results[p.ID] = distance
+					}
+				} else {
+					results[p.ID] = distance
+				}
+			}
+		}
+		return results
 	}
 }

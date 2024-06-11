@@ -3,6 +3,8 @@ module jtumidanski.com/rsvp
 go 1.21.6
 
 require (
+	github.com/agnivade/levenshtein v1.1.1
+	github.com/antzucaro/matchr v0.0.0-20221106193745-7bed6ef61ef9
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.7.4
 	github.com/manyminds/api2go v0.0.0-20220325145637-95b4fb838cf6

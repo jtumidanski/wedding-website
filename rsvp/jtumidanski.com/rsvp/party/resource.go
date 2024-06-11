@@ -24,6 +24,7 @@ func InitResource(si jsonapi.ServerInformation, db *gorm.DB) func(router *mux.Ro
 	return func(router *mux.Router, l logrus.FieldLogger) {
 		router.HandleFunc("/process-csv", registerProcessCSV(si)(l)(db)).Methods(http.MethodPut)
 		r := router.PathPrefix("/parties").Subrouter()
+		r.HandleFunc("", registerGetAllPartiesBySearch(si)(l)(db)).Methods(http.MethodGet).Queries("search", "{search}")
 		r.HandleFunc("", registerGetAllPartiesByHash(si)(l)(db)).Methods(http.MethodGet).Queries("hash", "{hash}")
 		r.HandleFunc("", registerGetAllParties(si)(l)(db)).Methods(http.MethodGet)
 	}
@@ -172,6 +173,51 @@ func handleProcessCSV(si jsonapi.ServerInformation) func(l logrus.FieldLogger) f
 					}
 
 					res, err := jsonapi.MarshalWithURLs(TransformAll(results), si)
+					if err != nil {
+						l.WithError(err).Errorf("Unable to marshal models.")
+						w.WriteHeader(http.StatusInternalServerError)
+						return
+					}
+					_, err = w.Write(res)
+					if err != nil {
+						l.WithError(err).Errorf("Unable to write response.")
+						w.WriteHeader(http.StatusInternalServerError)
+						return
+					}
+				}
+			}
+		}
+	}
+}
+
+func registerGetAllPartiesBySearch(si jsonapi.ServerInformation) func(l logrus.FieldLogger) func(db *gorm.DB) http.HandlerFunc {
+	return func(l logrus.FieldLogger) func(db *gorm.DB) http.HandlerFunc {
+		return func(db *gorm.DB) http.HandlerFunc {
+			return rest.RetrieveSpan(GetAllParties, handleGetAllPartiesBySearch(si)(l)(db))
+		}
+	}
+}
+
+func handleGetAllPartiesBySearch(si jsonapi.ServerInformation) func(l logrus.FieldLogger) func(db *gorm.DB) rest.SpanHandler {
+	return func(l logrus.FieldLogger) func(db *gorm.DB) rest.SpanHandler {
+		return func(db *gorm.DB) rest.SpanHandler {
+			return func(span opentracing.Span) http.HandlerFunc {
+				return func(w http.ResponseWriter, r *http.Request) {
+					search, ok := mux.Vars(r)["search"]
+					if !ok {
+						l.Errorf("Unable to properly parse search from path.")
+						w.WriteHeader(http.StatusBadRequest)
+						return
+					}
+
+					parties, err := GetAllBySearch(l, db)(search)
+					if err != nil {
+						l.WithError(err).Errorf("Unable to retrieve all parties for request.")
+						w.WriteHeader(http.StatusInternalServerError)
+						return
+					}
+
+					res, err := jsonapi.MarshalWithURLs(TransformAll(parties), si)
 					if err != nil {
 						l.WithError(err).Errorf("Unable to marshal models.")
 						w.WriteHeader(http.StatusInternalServerError)
