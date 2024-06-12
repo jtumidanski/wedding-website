@@ -5,6 +5,7 @@ type RestModel struct {
 	Attending bool     `json:"attending"`
 	Entree    string   `json:"entree"`
 	Allergies []string `json:"allergies"`
+	IpAddress string   `json:"ipAddress"`
 }
 
 func (p RestModel) GetID() string {

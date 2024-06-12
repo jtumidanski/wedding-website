@@ -8,6 +8,7 @@ import (
 	"jtumidanski.com/rsvp/party"
 	"jtumidanski.com/rsvp/party/member"
 	"jtumidanski.com/rsvp/party/member/response"
+	"jtumidanski.com/rsvp/party/member/response/log"
 	"jtumidanski.com/rsvp/rest"
 	"jtumidanski.com/rsvp/tracing"
 	"os/signal"
@@ -58,7 +59,7 @@ func main() {
 		}
 	}(tc)
 
-	db := database.Connect(l, database.SetMigrations(party.Migration, response.Migration, member.Migration))
+	db := database.Connect(l, database.SetMigrations(party.Migration, response.Migration, member.Migration, log.Migration))
 
 	rest.CreateService(l, ctx, wg, GetServer().GetPrefix(), party.InitResource(GetServer(), db), member.InitResource(GetServer(), db), response.InitResource(GetServer(), db))
 

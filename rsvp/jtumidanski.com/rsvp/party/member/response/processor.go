@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"jtumidanski.com/rsvp/database"
+	"jtumidanski.com/rsvp/party/member/response/log"
 )
 
 func Get(l logrus.FieldLogger, db *gorm.DB) func(memberId string) (Model, error) {
@@ -18,14 +19,25 @@ func Get(l logrus.FieldLogger, db *gorm.DB) func(memberId string) (Model, error)
 	}
 }
 
-func Update(l logrus.FieldLogger, db *gorm.DB) func(memberId string, attending bool, entree string, allergies string) (Model, error) {
-	return func(memberId string, attending bool, entree string, allergies string) (Model, error) {
-		l.Debugf("Updating member [%s] response to show attending=[%t] entree=[%s] and allergies=[%s]", memberId, attending, entree, allergies)
+func Update(l logrus.FieldLogger, db *gorm.DB) func(memberId string, attending bool, entree string, allergies string, ipAddress string) (Model, error) {
+	return func(memberId string, attending bool, entree string, allergies string, ipAddress string) (Model, error) {
+		l.Debugf("Updating member [%s] response to show attending=[%t] entree=[%s] allergies=[%s] ipaddress=[%s]", memberId, attending, entree, allergies, ipAddress)
 		memberUUID, err := uuid.Parse(memberId)
 		if err != nil {
 			l.WithError(err).Errorf("Invalid member uuid provided.")
 			return Model{}, err
 		}
-		return update(db)(memberUUID, attending, entree, allergies)
+
+		ret, err := update(db)(memberUUID, attending, entree, allergies)
+		if err != nil {
+			return Model{}, err
+		}
+
+		err = log.Create(l, db)(memberId, attending, entree, allergies, ipAddress)
+		if err != nil {
+			return Model{}, err
+		}
+
+		return ret, err
 	}
 }

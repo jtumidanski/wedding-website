@@ -127,7 +127,7 @@ func handleUpdateResponse(si jsonapi.ServerInformation) func(l logrus.FieldLogge
 				return func(memberId string) func(input RestModel) http.HandlerFunc {
 					return func(input RestModel) http.HandlerFunc {
 						return func(w http.ResponseWriter, r *http.Request) {
-							response, err := Update(l, db)(memberId, input.Attending, input.Entree, strings.Join(input.Allergies, ","))
+							response, err := Update(l, db)(memberId, input.Attending, input.Entree, strings.Join(input.Allergies, ","), input.IpAddress)
 							if err != nil {
 								l.WithError(err).Errorf("Unable to response for member [%s].", memberId)
 								w.WriteHeader(http.StatusInternalServerError)

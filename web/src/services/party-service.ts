@@ -41,7 +41,6 @@ export async function GetParty(search: string): Promise<PartyResponse> {
     return {data: []};
   }
 }
-
 export async function updateAllMemberResponse(members: Member[]): Promise<void> {
   try {
     // Map each member to a Promise representing the PATCH request
@@ -58,6 +57,13 @@ export async function updateAllMemberResponse(members: Member[]): Promise<void> 
 }
 
 export async function updateMemberResponse(memberId: string, input: Response): Promise<void> {
+
+  var ipAddress;
+
+  await fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => ipAddress = data.ip)
+
   try {
     const url = baseUri + `members/${memberId}/response`;
 
@@ -73,7 +79,8 @@ export async function updateMemberResponse(memberId: string, input: Response): P
           attributes: {
             attending: input.attending,
             entree: input.entree,
-            allergies: input.allergies
+            allergies: input.allergies,
+            ipAddress: ipAddress
           }
         },
       }),
