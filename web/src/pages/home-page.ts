@@ -18,8 +18,8 @@ export class ReservationPage extends BasePage {
           display: flex;
           flex-direction: column;
           align-items: center;
-          height: 100dvh;
-          width: 100dvw;
+          height: 100vh;
+          width: 100vw;
           box-sizing: border-box;
           overflow-x: hidden;
           overflow-y: auto;
