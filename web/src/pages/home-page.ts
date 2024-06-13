@@ -11,20 +11,28 @@ import {BasePage} from './base-page';
 
 @customElement('home-page')
 export class ReservationPage extends BasePage {
-  static styles = css`      
+  static styles = css`
       .content {
           z-index: 1;
           color: white;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
           align-items: center;
           height: 100vh;
           width: 100vw;
-          padding: 20px;
           box-sizing: border-box;
           overflow-x: hidden;
           overflow-y: auto;
+      }
+
+      .content.mobile {
+          justify-content: space-between;
+          padding: 20px;
+      }
+
+      .content.desktop {
+          gap: 30px;
+          padding: 50px;
       }
 
       .normal-text {
@@ -35,7 +43,7 @@ export class ReservationPage extends BasePage {
           font-style: normal;
           font-weight: 400;
           line-height: normal;
-          letter-spacing: 1.4px;
+          letter-spacing: 1.3px;
           text-transform: uppercase;
       }
 
@@ -62,6 +70,8 @@ export class ReservationPage extends BasePage {
           position: relative;
           top: -0.4em;
           font-size: 80%;
+          display: flex;
+          align-items: center;
       }
 
       .date-text.desktop {
@@ -133,7 +143,7 @@ export class ReservationPage extends BasePage {
 
   mobileRender() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         <mobile-header></mobile-header>
         <div class="wedding-intro">
           <div class="normal-text">Please join Abigail & Justin</div>
@@ -151,7 +161,7 @@ export class ReservationPage extends BasePage {
             <itinerary-item key="Dinner" value="07:30 pm"></itinerary-item>
             <itinerary-item key="Reception" value="08:30 pm"></itinerary-item>
           </div>
-          <footer-item></footer-item>
+          <footer-item style="margin-top: auto"></footer-item>
         </div>
       </div>
     `;
@@ -159,12 +169,14 @@ export class ReservationPage extends BasePage {
 
   desktopRender() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         <desktop-header></desktop-header>
         <div class="desktop-info-container">
           <div class="wedding-intro">
             <div class="normal-text desktop">Please join Abigail & Justin</div>
-            <div class="date-text desktop">August 30<sup>th</sup> 2024</div>
+            <div style="display: flex; flex-direction: column; align-items: center; position: relative; top: -20px">
+              <div class="date-text desktop">August 30<sup>th</sup> 2024</div>              
+            </div>
             <div class="normal-text desktop">To celebrate their wedding</div>
           </div>
           <div class="desktop-detail-container">
@@ -181,7 +193,7 @@ export class ReservationPage extends BasePage {
             </div>
           </div>
         </div>
-        <footer-item></footer-item>
+        <footer-item style="margin-top: auto"></footer-item>
       </div>
     `;
   }

@@ -25,21 +25,29 @@ export class HomePage extends BasePage {
           color: white;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
           align-items: center;
           height: 100vh;
           width: 100vw;
-          padding: 20px;
           box-sizing: border-box;
           overflow-x: hidden;
           overflow-y: auto;
       }
 
+      .content.mobile {
+          justify-content: space-between;
+          padding: 20px;
+      }
+
+      .content.desktop {
+          gap: 30px;
+          padding: 50px;
+      }
+
       .main-content {
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
           align-items: center;
+          justify-content: space-between;
       }
 
       .main-content.desktop {
@@ -167,6 +175,20 @@ export class HomePage extends BasePage {
 
       .double-button.mobile {
           width: 100%
+      }
+      
+      .happy-image.desktop {
+          height: 250px;
+          width: 250px;
+      }
+
+      .happy-image.mobile {
+          height: 160px;
+          width: 160px;
+      }
+      
+      .footer.desktop {
+          margin-top: auto;
       }
   `;
 
@@ -378,7 +400,7 @@ export class HomePage extends BasePage {
 
   renderCodeInput() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         ${this.isMobile ?
           html`
             <mobile-header></mobile-header>` :
@@ -395,16 +417,14 @@ export class HomePage extends BasePage {
                          .enabled=${true}
                          @user-clicked=${this._handleSearchConfirm}></styled-button>
         </div>
-        <div>
-        </div>
-        <footer-item></footer-item>
+        <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
     `;
   }
 
   renderCodeBad() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         ${this.isMobile ?
           html`
             <mobile-header></mobile-header>` :
@@ -424,16 +444,14 @@ export class HomePage extends BasePage {
           <styled-button text="back" class="single-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
                          @user-clicked=${this._handleBadCodeBack}></styled-button>
         </div>
-        <div>
-        </div>
-        <footer-item></footer-item>
+        <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
     `;
   }
 
   renderAttendance() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         ${this.isMobile ?
           html`
             <mobile-header></mobile-header>` :
@@ -467,14 +485,14 @@ export class HomePage extends BasePage {
         </div>
         <div>
         </div>
-        <footer-item></footer-item>
+        <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
     `;
   }
 
   renderEntree() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         ${this.isMobile ?
           html`
             <mobile-header></mobile-header>` :
@@ -508,14 +526,14 @@ export class HomePage extends BasePage {
         </div>
         <div>
         </div>
-        <footer-item></footer-item>
+        <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
     `;
   }
 
   renderAllergyPrompt() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         ${this.isMobile ?
           html`
             <mobile-header></mobile-header>` :
@@ -549,14 +567,14 @@ export class HomePage extends BasePage {
         </div>
         <div>
         </div>
-        <footer-item></footer-item>
+        <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
     `;
   }
 
   renderAllergyDetail() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         ${this.isMobile ?
           html`
             <mobile-header></mobile-header>` :
@@ -590,14 +608,14 @@ export class HomePage extends BasePage {
         </div>
         <div>
         </div>
-        <footer-item></footer-item>
+        <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
     `;
   }
 
   renderComplete() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         ${this.isMobile ?
           html`
             <mobile-header></mobile-header>` :
@@ -610,7 +628,7 @@ export class HomePage extends BasePage {
               Thank you for your rsvp!
             </div>
           </div>
-          <img src="/images/happy_image.svg" />
+          <img class="happy-image ${this.isMobile ? 'mobile' : 'desktop'}" src="/images/happy_image.svg" />
           <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
             If you need to change any of your answers, please contact us.
           </div>
@@ -619,7 +637,7 @@ export class HomePage extends BasePage {
         </div>
         <div>
         </div>
-        <footer-item></footer-item>
+        <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
     `;
   }

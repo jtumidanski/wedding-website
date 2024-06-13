@@ -16,15 +16,23 @@ export class FaqPage extends BasePage {
           color: white;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
           align-items: center;
           height: 100vh;
           width: 100vw;
-          padding: 20px;
           box-sizing: border-box;
-          gap: 30px;
           overflow-x: hidden;
           overflow-y: auto;
+      }
+      
+      .content.mobile {
+          justify-content: space-between;
+          padding: 20px;
+          gap: 20px;
+      }
+
+      .content.desktop {
+          gap: 30px;
+          padding: 50px;
       }
 
       .faq-content {
@@ -69,7 +77,7 @@ export class FaqPage extends BasePage {
 
   render() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         ${this.isMobile ?
       html`<mobile-header></mobile-header>` :
       html`<desktop-header selected="2"></desktop-header>`}

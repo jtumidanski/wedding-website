@@ -70,7 +70,7 @@ export class LogoIcon extends LitElement {
           font-style: normal;
           font-weight: 400;
           line-height: normal;
-          letter-spacing: 1.4px;
+          letter-spacing: 1.3px;
       }
       
       .normal-text.desktop {
@@ -89,7 +89,7 @@ export class LogoIcon extends LitElement {
           font-style: normal;
           font-weight: 400;
           line-height: normal;
-          letter-spacing: 1.4px;
+          letter-spacing: 1.3px;
           text-decoration-line: underline;
       }
       

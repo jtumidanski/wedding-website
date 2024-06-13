@@ -19,17 +19,33 @@ export class AccommodationsPage extends BasePage {
           color: white;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
           align-items: center;
           height: 100vh;
           width: 100vw;
-          padding: 20px;
           box-sizing: border-box;
           overflow-x: hidden;
           overflow-y: auto;
       }
 
+      .content.mobile {
+          justify-content: space-between;
+          padding: 20px;
+      }
+
+      .content.desktop {
+          gap: 30px;
+          padding: 50px;
+      }
+
       .title-text {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 20px;
+      }
+      
+      .joy-title-container {
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -85,30 +101,36 @@ export class AccommodationsPage extends BasePage {
 
       .accommodations-text.desktop {
           font-size: 18px;
+          width: 875px;
       }
 
       .accommodations.mobile {
-          padding: 10px;
           column-count: 2;
+          justify-content: space-between;  
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: center;
+          align-content: space-between;
+          gap: 20px;
+          padding: 50px 10px;
       }
 
       .accommodations.desktop {
-          padding: 100px;
+          padding: 50px;
           column-count: 4;
       }
   `;
 
   mobileRender() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         <mobile-header></mobile-header>
-        <div class="title-text">
+        <div class="joy-title-container">
           <div class="page-title">Accommodations</div>
-          <div class="joy-message">
-            We are over the moon that you will be joining us to celebrate our wedding!
+          <div class="joy-message">We are over the moon that you will be joining us to celebrate our wedding!
           </div>
-          <div class="accommodations-text">
-            Since our wedding date coincides with peak tourism season, we recommend you secure your lodging early as
+          <div class="accommodations-text">Since our wedding date coincides with peak tourism season, we recommend you secure your lodging early as
             availability can be limited. To assist you, we’ve compiled a list of recommended lodging.
           </div>
         </div>
@@ -125,22 +147,22 @@ export class AccommodationsPage extends BasePage {
                                    url="https://www.allegancountryinn.com/"></text-accommodation-link>
           <text-accommodation-link name="Jade Estate Inn" url="https://jadeestateinn.com/"></text-accommodation-link>
         </div>
-        <footer-item></footer-item>
+        <footer-item style="margin-top: auto"></footer-item>
       </div>
     `;
   }
 
   desktopRender() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         <desktop-header selected="1"></desktop-header>
         <div class="title-text">
-          <div class="page-title desktop">Accommodations</div>
-          <div class="joy-message desktop">
-            We are over the moon that you will be joining us to celebrate our wedding!
+          <div class="joy-title-container">
+            <div class="page-title desktop">Accommodations</div>
+            <div class="joy-message desktop">We are over the moon that you will be joining us to celebrate our wedding!
+            </div>
           </div>
-          <div class="accommodations-text desktop">
-            Since our wedding date coincides with peak tourism season, we recommend you secure your lodging early as
+          <div class="accommodations-text desktop">Since our wedding date coincides with peak tourism season, we recommend you secure your lodging early as
             availability can be limited. To assist you, we’ve compiled a list of recommended lodging.
           </div>
         </div>
@@ -157,7 +179,7 @@ export class AccommodationsPage extends BasePage {
           <vrbo-accommodation-link></vrbo-accommodation-link>
           <text-accommodation-link name="Jade Estate Inn" url="https://jadeestateinn.com/"></text-accommodation-link>
         </div>
-        <footer-item></footer-item>
+        <footer-item style="margin-top: auto"></footer-item>
       </div>
     `;
   }

@@ -14,14 +14,22 @@ export class RegistryPage extends BasePage {
           color: white;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
           align-items: center;
           height: 100vh;
           width: 100vw;
-          padding: 20px;
           box-sizing: border-box;
           overflow-x: hidden;
           overflow-y: auto;
+      }
+
+      .content.mobile {
+          justify-content: space-between;
+          padding: 20px;
+      }
+
+      .content.desktop {
+          gap: 30px;
+          padding: 50px;
       }
       
       .title-text {
@@ -87,21 +95,20 @@ export class RegistryPage extends BasePage {
 
   render() {
     return html`
-      <div class="content">
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
         ${this.isMobile ?
       html`<mobile-header></mobile-header>` :
       html`<desktop-header selected="3"></desktop-header>`}
         <div class="title-text ${this.isMobile ? 'mobile' : 'desktop'}">
           <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">Registry</div>
-          <div class="registry-text ${this.isMobile ? 'mobile' : 'desktop'}">
-            As we celebrate the beginning of our life together, your presence at our wedding is the most meaningful gift we could receive.
+          <div class="registry-text ${this.isMobile ? 'mobile' : 'desktop'}">As we celebrate the beginning of our life together, your presence at our wedding is the most meaningful gift we could receive.
 
             Nevertheless, should you wish to offer a token of your congratulations, we would be grateful for your contribution to our honeymoon fund. Your kindness will assist us in creating memories that will last a lifetime.
           </div>
           <honey-fund-registry-link class="${this.isMobile ? 'mobile' : 'desktop'}"></honey-fund-registry-link>
           <amazon-registry-link class="${this.isMobile ? 'mobile' : 'desktop'}"></amazon-registry-link>
         </div>
-        <footer-item></footer-item>
+        <footer-item style="margin-top: auto"></footer-item>
       </div>
     `;
   }
