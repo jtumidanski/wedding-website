@@ -36,6 +36,7 @@ export class HomePage extends BasePage {
       .content.mobile {
           justify-content: space-between;
           padding: 20px;
+          gap: 20px;
       }
 
       .content.desktop {
@@ -483,8 +484,6 @@ export class HomePage extends BasePage {
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
         </div>
-        <div>
-        </div>
         <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
     `;
@@ -523,8 +522,6 @@ export class HomePage extends BasePage {
                            .enabled=${this._processedEntree}
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
-        </div>
-        <div>
         </div>
         <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
@@ -565,8 +562,6 @@ export class HomePage extends BasePage {
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
         </div>
-        <div>
-        </div>
         <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
     `;
@@ -606,8 +601,6 @@ export class HomePage extends BasePage {
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
         </div>
-        <div>
-        </div>
         <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
     `;
@@ -634,8 +627,6 @@ export class HomePage extends BasePage {
           </div>
           <navigate-styled-button class="single-button ${this.isMobile ? 'mobile' : 'desktop'}" text="done" url="/"
                                   enabled></navigate-styled-button>
-        </div>
-        <div>
         </div>
         <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
