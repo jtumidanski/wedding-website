@@ -23,10 +23,10 @@ export class ReservationPage extends BasePage {
           box-sizing: border-box;
           overflow-x: hidden;
           overflow-y: auto;
+          justify-content: space-between;
       }
 
       .content.mobile {
-          justify-content: space-between;
           padding: 20px;
       }
 
@@ -193,7 +193,7 @@ export class ReservationPage extends BasePage {
             </div>
           </div>
         </div>
-        <footer-item style="margin-top: auto"></footer-item>
+        <footer-item></footer-item>
       </div>
     `;
   }
