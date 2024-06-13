@@ -31,8 +31,8 @@ export class NavigationMenu extends LitElement {
       }
 
       .menu-background.visible {
-          width: 100vw;
-          height: 100vh;
+          width: 100dvw;
+          height: 100dvh;
       }
       
       .menu-container {
@@ -40,7 +40,7 @@ export class NavigationMenu extends LitElement {
           justify-content: center; /* Center horizontally */
           align-items: center; /* Center vertically */
           width: 0;
-          height: 100vh;
+          height: 100dvh;
           transition: width 0.3s, opacity 0.3s;
           position: fixed;
           top: 0;

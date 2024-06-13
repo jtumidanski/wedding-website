@@ -15,8 +15,8 @@ export class RegistryPage extends BasePage {
           display: flex;
           flex-direction: column;
           align-items: center;
-          height: 100vh;
-          width: 100vw;
+          height: 100dvh;
+          width: 100dvw;
           box-sizing: border-box;
           overflow-x: hidden;
           overflow-y: auto;

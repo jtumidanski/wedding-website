@@ -33,7 +33,6 @@ export class NameInput extends LitElement {
       }
 
       .name-input {
-          border: solid;
           height: var(--magic-number);
           width: calc(5 * var(--magic-number));
           font-size: calc(0.4 * var(--magic-number));
@@ -43,10 +42,29 @@ export class NameInput extends LitElement {
           font-weight: 400;
           text-align: center;
           letter-spacing: 0.13em;
-          
+
           box-sizing: border-box;
           overflow: hidden;
           background-color: transparent;
+          border: 1px solid;
+      }
+
+      .name-input:focus {
+          height: var(--magic-number);
+          width: calc(5 * var(--magic-number));
+          font-size: calc(0.4 * var(--magic-number));
+
+          font-family: 'Bodoni 72 Smallcaps', serif;
+          font-style: normal;
+          font-weight: 400;
+          text-align: center;
+          letter-spacing: 0.13em;
+
+          box-sizing: border-box;
+          overflow: hidden;
+          background-color: transparent;
+          outline: none; /* Ensuring no outline appears */
+          border: 1px solid;
       }
   `;
 
