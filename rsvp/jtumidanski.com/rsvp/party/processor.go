@@ -85,6 +85,10 @@ func GetAllBySearch(l logrus.FieldLogger, db *gorm.DB) func(search string) ([]Mo
 
 		var lowest = ""
 		for k, v := range results {
+			if v < 0.5 {
+				continue
+			}
+
 			if val, ok := results[lowest]; ok {
 				if v > val {
 					lowest = k
