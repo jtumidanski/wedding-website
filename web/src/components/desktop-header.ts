@@ -46,7 +46,9 @@ export class DesktopHeader extends LitElement {
       <div class="desktop-header">
         <navigate-styled-button text="rsvp" url="/rsvp" enabled .selected="${this._selected === "0"}"></navigate-styled-button>
         <navigate-styled-button text="accommodations" url="/accommodations" enabled .selected="${this._selected === "1"}"></navigate-styled-button>
+        <div style="min-width: 32px"></div>
         <logo-icon @click="${this.handleClick}"></logo-icon>
+        <div style="min-width: 32px"></div>
         <navigate-styled-button text="Q&A" url="/faq" enabled .selected="${this._selected === "2"}"></navigate-styled-button>
         <navigate-styled-button text="Registry" url="/registry" enabled .selected="${this._selected === "3"}"></navigate-styled-button>
       </div>
