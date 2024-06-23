@@ -74,90 +74,111 @@ func GetAllByHash(_ logrus.FieldLogger, db *gorm.DB) func(hash string) ([]Model,
 func GetAllBySearch(l logrus.FieldLogger, db *gorm.DB) func(search string) ([]Model, error) {
 	return func(search string) ([]Model, error) {
 		allProvider := database.ModelSliceProvider[Model, Entity](db)(getAll(), modelFromEntity)
-
-		ps, err := allProvider()
-		if err != nil {
-			return nil, err
-		}
-
-		//var results = computeLevenshteinDistance(l)(search, ps)
-		var results = computeJaroWinklerDistance(l)(search, ps)
-
-		var lowest = ""
-		for k, v := range results {
-			if v < 0.5 {
-				continue
-			}
-
-			if val, ok := results[lowest]; ok {
-				if v > val {
-					lowest = k
-				}
-			} else {
-				lowest = k
-			}
-		}
-
-		var ret = make([]Model, 0)
-		for _, p := range ps {
-			if lowest == p.ID {
-				l.Debugf("Closest match is [%s] off search [%s].", p.Name, search)
-				ret = append(ret, p)
-			}
-		}
-
-		if len(ret) == 0 {
-			l.Warnf("Failed to find match for search [%s].", search)
-		}
-
-		return ret, nil
+		comp := jaroWinklerDistanceComputer(l)(search)
+		finder := findLeastJaroWinkler(l)(search)
+		return getAllBySearch(allProvider, comp, finder)()
 	}
 }
 
-func computeLevenshteinDistance(l logrus.FieldLogger) func(search string, ps []Model) map[string]int {
-	return func(search string, ps []Model) map[string]int {
-		var results = make(map[string]int)
-		for _, p := range ps {
-			for _, m := range p.Members {
-				fullName := m.FirstName + " " + m.LastName
-				levenshteinDistance := levenshtein.ComputeDistance(fullName, search)
-				l.Debugf("Computing levenshtein for [%s %s] off search [%s]. Distance=[%d]", m.FirstName, m.LastName, search, levenshteinDistance)
+type computer func(models []Model) map[string]float64
 
-				if val, ok := results[p.ID]; ok {
-					if val > levenshteinDistance {
+type resultFinder func([]Model, map[string]float64) ([]Model, error)
+
+func getAllBySearch(provider model.SliceProvider[Model], computer computer, finder resultFinder) model.SliceProvider[Model] {
+	ps, err := provider()
+	if err != nil {
+		return model.ErrorSliceProvider[Model](err)
+	}
+	results, err := finder(ps, computer(ps))
+	if err != nil {
+		return model.ErrorSliceProvider[Model](err)
+	}
+	return model.FixedSliceProvider[Model](results)
+}
+
+func levenshteinDistanceComputer(l logrus.FieldLogger) func(search string) computer {
+	return func(search string) computer {
+		return func(ps []Model) map[string]float64 {
+			var results = make(map[string]float64)
+			for _, p := range ps {
+				for _, m := range p.Members {
+					fullName := m.FirstName + " " + m.LastName
+					levenshteinDistance := float64(levenshtein.ComputeDistance(fullName, search))
+					l.Debugf("Computing levenshtein for [%s %s] off search [%s]. Distance=[%f]", m.FirstName, m.LastName, search, levenshteinDistance)
+
+					if val, ok := results[p.ID]; ok {
+						if val > levenshteinDistance {
+							results[p.ID] = levenshteinDistance
+						}
+					} else {
 						results[p.ID] = levenshteinDistance
 					}
-				} else {
-					results[p.ID] = levenshteinDistance
 				}
 			}
+			return results
 		}
-		return results
 	}
 }
 
-func computeJaroWinklerDistance(l logrus.FieldLogger) func(search string, ps []Model) map[string]float64 {
-	return func(search string, ps []Model) map[string]float64 {
-		var results = make(map[string]float64)
-		for _, p := range ps {
-			for _, m := range p.Members {
-				fullName := m.FirstName + " " + m.LastName
-				distance := matchr.JaroWinkler(fullName, search, false)
-				l.Debugf("Computing Jaro Winkler for [%s %s] off search [%s]. Distance=[%f]", m.FirstName, m.LastName, search, distance)
+func jaroWinklerDistanceComputer(l logrus.FieldLogger) func(search string) computer {
+	return func(search string) computer {
+		return func(ps []Model) map[string]float64 {
+			var results = make(map[string]float64)
+			for _, p := range ps {
+				for _, m := range p.Members {
+					fullName := m.FirstName + " " + m.LastName
+					distance := matchr.JaroWinkler(fullName, search, false)
+					l.Debugf("Computing Jaro Winkler for [%s %s] off search [%s]. Distance=[%f]", m.FirstName, m.LastName, search, distance)
 
-				if distance > 1 {
+					if distance > 1 {
+						continue
+					}
+
+					if val, ok := results[p.ID]; ok {
+						if val < distance {
+							results[p.ID] = distance
+						}
+					} else {
+						results[p.ID] = distance
+					}
+				}
+			}
+			return results
+		}
+	}
+}
+
+func findLeastJaroWinkler(l logrus.FieldLogger) func(search string) resultFinder {
+	return func(search string) resultFinder {
+		return func(baseData []Model, results map[string]float64) ([]Model, error) {
+			var lowest = ""
+			for k, v := range results {
+				if v < 0.5 {
 					continue
 				}
 
-				if val, ok := results[p.ID]; ok {
-					if val < distance {
-						results[p.ID] = distance
+				if val, ok := results[lowest]; ok {
+					if v > val {
+						lowest = k
 					}
 				} else {
-					results[p.ID] = distance
+					lowest = k
 				}
 			}
+
+			var ret = make([]Model, 0)
+			for _, p := range baseData {
+				if lowest == p.ID {
+					l.Debugf("Closest match is [%s] off search [%s].", p.Name, search)
+					ret = append(ret, p)
+				}
+			}
+
+			if len(ret) == 0 {
+				l.Warnf("Failed to find match for search [%s].", search)
+			}
+
+			return ret, nil
 		}
-		return results
 	}
 }
