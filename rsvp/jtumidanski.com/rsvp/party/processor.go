@@ -101,10 +101,15 @@ func GetAllBySearch(l logrus.FieldLogger, db *gorm.DB) func(search string) ([]Mo
 		var ret = make([]Model, 0)
 		for _, p := range ps {
 			if lowest == p.ID {
-				l.Debugf("Closest match is [%s].", p.Name)
+				l.Debugf("Closest match is [%s] off search [%s].", p.Name, search)
 				ret = append(ret, p)
 			}
 		}
+
+		if len(ret) == 0 {
+			l.Warnf("Failed to find match for search [%s].", search)
+		}
+
 		return ret, nil
 	}
 }
