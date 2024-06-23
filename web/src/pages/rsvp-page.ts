@@ -224,7 +224,6 @@ export class HomePage extends BasePage {
   _nameValue = '';
   _party: PartyResponse = {'data': []};
   _allergyPrompt: string[] = [];
-  _processedAttendance = false;
   _processedEntree = false;
 
   private _nameValueListener(e: CustomEvent) {
@@ -234,7 +233,6 @@ export class HomePage extends BasePage {
 
   private _attendanceChanged(e: CustomEvent) {
     this._updateAttendanceOfMember(e.detail.member_id, e.detail.attending);
-    this._processedAttendance = this._hasSomeoneAttending();
     this._processedEntree = this._attendeesHaveEntree();
     this.requestUpdate();
   }
@@ -357,7 +355,7 @@ export class HomePage extends BasePage {
   }
 
   private _handleForward(event: any) {
-    if (this._state == 4 || (this._state == 3 && this._allergyPrompt.length == 0)) {
+    if ((this._state == 1 && !this._hasSomeoneAttending()) || this._state == 4 || (this._state == 3 && this._allergyPrompt.length == 0)) {
       let members = this._party.data.flatMap(p => p.attributes.members);
       updateAllMemberResponse(members).then(this._moveToConfirmState);
       return;
@@ -375,7 +373,6 @@ export class HomePage extends BasePage {
   private _checkPartyResult = (party: PartyResponse) => {
     if (party.data && party.data.length > 0) {
       this._party = party;
-      this._processedAttendance = this._hasSomeoneAttending();
       this._processedEntree = this._attendeesHaveEntree();
       this._allergyPrompt = this._party.data.flatMap(p => p.attributes.members).filter(m => m.response.allergies.length > 0).map(m => m.id);
       this._state = 1;
@@ -480,7 +477,7 @@ export class HomePage extends BasePage {
             <styled-button text="back" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
                            @user-clicked=${this._handleBack}></styled-button>
             <styled-button text="next" class="double-button ${this.isMobile ? 'mobile' : 'desktop'}"
-                           .enabled=${this._processedAttendance}
+                           enabled
                            @user-clicked=${this._handleForward}></styled-button>
           </div>
         </div>
