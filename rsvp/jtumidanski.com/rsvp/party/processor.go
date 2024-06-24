@@ -74,6 +74,7 @@ func GetAllByHash(_ logrus.FieldLogger, db *gorm.DB) func(hash string) ([]Model,
 
 func GetAllBySearch(l logrus.FieldLogger, db *gorm.DB) func(search string) ([]Model, error) {
 	return func(search string) ([]Model, error) {
+		l.Infof("Attempting to search [%s].", search)
 		allProvider := database.ModelSliceProvider[Model, Entity](db)(getAll(), modelFromEntity)
 		comp := jaroWinklerDistanceComputer(l)(search)
 		finder := findLeastJaroWinkler(l)(search)
@@ -129,7 +130,7 @@ func jaroWinklerDistanceComputer(l logrus.FieldLogger) func(search string) compu
 				for _, m := range p.Members {
 					fullName := m.FirstName + " " + m.LastName
 					distance := matchr.JaroWinkler(strings.ToUpper(fullName), strings.ToUpper(search), false)
-					l.Debugf("Computing Jaro Winkler for [%s %s] off search [%s]. Distance=[%f]", m.FirstName, m.LastName, search, distance)
+					l.Debugf("Computing Jaro Winkler for [%s %s] off search [%s]. Distance=[%f].", m.FirstName, m.LastName, search, distance)
 
 					if distance > 1 {
 						continue
@@ -166,7 +167,7 @@ func findLeastJaroWinkler(l logrus.FieldLogger) func(search string) resultFinder
 			var ret = make([]Model, 0)
 			for _, p := range baseData {
 				if lowest == p.ID {
-					l.Debugf("Closest match is [%s] off search [%s] at [%f].", p.Name, search, results[lowest])
+					l.Infof("Closest match is [%s] off search [%s] at [%f].", p.Name, search, results[lowest])
 
 					if results[lowest] < 0.75 {
 						l.Warnf("Unfortunately, confidence is less than threshold. Rejecting match.")

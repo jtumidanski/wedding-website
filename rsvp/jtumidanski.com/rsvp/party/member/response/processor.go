@@ -10,6 +10,7 @@ import (
 
 func Get(l logrus.FieldLogger, db *gorm.DB) func(memberId string) (Model, error) {
 	return func(memberId string) (Model, error) {
+		l.Debugf("Attempting to get member [%s].", memberId)
 		memberUUID, err := uuid.Parse(memberId)
 		if err != nil {
 			l.WithError(err).Errorf("Invalid member uuid provided.")
@@ -21,7 +22,8 @@ func Get(l logrus.FieldLogger, db *gorm.DB) func(memberId string) (Model, error)
 
 func Update(l logrus.FieldLogger, db *gorm.DB) func(memberId string, attending bool, entree string, allergies string, ipAddress string) (Model, error) {
 	return func(memberId string, attending bool, entree string, allergies string, ipAddress string) (Model, error) {
-		l.Debugf("Updating member [%s] response to show attending=[%t] entree=[%s] allergies=[%s] ipaddress=[%s]", memberId, attending, entree, allergies, ipAddress)
+		l.Infof("Updating member [%s] response to show attending=[%t] entree=[%s] allergies=[%s].", memberId, attending, entree, allergies)
+		l.Debugf("Member [%s] ip address=[%s]", memberId, ipAddress)
 		memberUUID, err := uuid.Parse(memberId)
 		if err != nil {
 			l.WithError(err).Errorf("Invalid member uuid provided.")
