@@ -407,7 +407,7 @@ export class HomePage extends BasePage {
         <div class="title-text">
           <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
           <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
-            Please enter your first and last name
+            Please enter the first and last name of a member of your party
           </div>
           <name-input id="name-input" class="${this.isMobile ? 'mobile' : 'desktop'}"
                        @value-changed=${this._nameValueListener} @keydown=${this.handleKeyDown}></name-input>
