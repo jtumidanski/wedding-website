@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 	"jtumidanski.com/rsvp/database"
 	"jtumidanski.com/rsvp/model"
+	"strings"
 )
 
 func Create(l logrus.FieldLogger, db *gorm.DB) func(name string, hash string, firstName string, lastName string) (Model, error) {
@@ -127,7 +128,7 @@ func jaroWinklerDistanceComputer(l logrus.FieldLogger) func(search string) compu
 			for _, p := range ps {
 				for _, m := range p.Members {
 					fullName := m.FirstName + " " + m.LastName
-					distance := matchr.JaroWinkler(fullName, search, false)
+					distance := matchr.JaroWinkler(strings.ToUpper(fullName), strings.ToUpper(search), false)
 					l.Debugf("Computing Jaro Winkler for [%s %s] off search [%s]. Distance=[%f]", m.FirstName, m.LastName, search, distance)
 
 					if distance > 1 {
@@ -153,10 +154,6 @@ func findLeastJaroWinkler(l logrus.FieldLogger) func(search string) resultFinder
 		return func(baseData []Model, results map[string]float64) ([]Model, error) {
 			var lowest = ""
 			for k, v := range results {
-				if v < 0.5 {
-					continue
-				}
-
 				if val, ok := results[lowest]; ok {
 					if v > val {
 						lowest = k
@@ -169,8 +166,13 @@ func findLeastJaroWinkler(l logrus.FieldLogger) func(search string) resultFinder
 			var ret = make([]Model, 0)
 			for _, p := range baseData {
 				if lowest == p.ID {
-					l.Debugf("Closest match is [%s] off search [%s].", p.Name, search)
-					ret = append(ret, p)
+					l.Debugf("Closest match is [%s] off search [%s] at [%f].", p.Name, search, results[lowest])
+
+					if results[lowest] < 0.75 {
+						l.Warnf("Unfortunately, confidence is less than threshold. Rejecting match.")
+					} else {
+						ret = append(ret, p)
+					}
 				}
 			}
 
