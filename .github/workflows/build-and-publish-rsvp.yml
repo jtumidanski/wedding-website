@@ -19,6 +19,9 @@ jobs:
       with:
         go-version: '1.21.6'  # Replace with your Go version
 
+    - name: Set up working directory
+      run: cd rsvp/jtumidanski.com/rsvp
+
     - name: Install dependencies
       run: go mod download
 
