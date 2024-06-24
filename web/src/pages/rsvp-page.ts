@@ -302,6 +302,7 @@ export class HomePage extends BasePage {
       this._allergyPrompt.push(e.detail.member_id);
     } else {
       this._allergyPrompt = this._allergyPrompt.filter(val => val !== e.detail.member_id);
+      this._updateMemberAllergy(e.detail.member_id, []);
     }
     this.requestUpdate();
   }
