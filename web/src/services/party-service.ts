@@ -1,5 +1,6 @@
 
-const baseUri = `https://wedding.tumidanski.com/api/rsvp/`
+const baseUri = window.location.origin + `/api/rsvp/`;
+  
 export interface PartyResponse {
   data: Party[];
 }
