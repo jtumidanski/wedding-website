@@ -201,6 +201,8 @@ export class HomePage extends BasePage {
 
   render() {
     switch (this._state) {
+      case -2:
+        return this.renderThankYou();
       case -1:
         return this.renderCodeBad();
       case 0:
@@ -220,7 +222,7 @@ export class HomePage extends BasePage {
     }
   }
 
-  _state = 0;
+  _state = -2;
   _nameValue = '';
   _party: PartyResponse = {'data': []};
   _allergyPrompt: string[] = [];
@@ -442,6 +444,27 @@ export class HomePage extends BasePage {
           </div>
           <styled-button text="back" class="single-button ${this.isMobile ? 'mobile' : 'desktop'}" enabled
                          @user-clicked=${this._handleBadCodeBack}></styled-button>
+        </div>
+        <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
+      </div>
+    `;
+  }
+
+  renderThankYou() {
+    return html`
+      <div class="content ${this.isMobile ? 'mobile' : 'desktop'}">
+        ${this.isMobile ?
+          html`
+            <mobile-header></mobile-header>` :
+          html`
+            <desktop-header selected="0"></desktop-header>`}
+        <div class="main-content ${this.isMobile ? 'mobile' : 'desktop'}">
+          <div class="title-text">
+            <div class="page-title ${this.isMobile ? 'mobile' : 'desktop'}">RSVP</div>
+            <div class="joy-message ${this.isMobile ? 'mobile' : 'desktop'}">
+              The window to RSVP or adjust dinner selections has closed!
+            </div>
+          </div>
         </div>
         <footer-item class="footer ${this.isMobile ? 'mobile' : 'desktop'}"></footer-item>
       </div>
